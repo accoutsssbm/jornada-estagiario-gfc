@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-09-30T23:35:32.716Z",
+ "atualizadoEm": "2026-09-30T23:47:12.510Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -18,13 +18,30 @@
   }
  ],
  "progresso": {
-  "emuoqtvavv1onl": {}
+  "emuoqtvavv1onl": {
+   "M01": {
+    "status": "estudo",
+    "inicio": "2026-09-30",
+    "prazo": "2026-10-05",
+    "prazoOriginal": "2026-10-05",
+    "liberado": false,
+    "checklist": {},
+    "dominio": "Observou",
+    "anotacoes": "",
+    "tentativas": []
+   }
+  }
  },
  "ajustes": {},
  "questoesExtras": {},
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-09-30T23:47:12.510Z",
+   "quem": "Julia Evelyn",
+   "acao": "iniciou M01"
+  },
   {
    "em": "2026-09-30T23:35:32.716Z",
    "quem": "Vitória Karoline",
