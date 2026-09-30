@@ -1,0 +1,22 @@
+{
+ "versao": 1,
+ "criadoEm": "2026-09-30T23:31:12.107Z",
+ "atualizadoEm": "2026-09-30T23:31:12.107Z",
+ "instrutor": {
+  "nome": "Vitória Karoline",
+  "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
+ },
+ "estagiarios": [],
+ "progresso": {},
+ "ajustes": {},
+ "questoesExtras": {},
+ "questoesOff": {},
+ "encontros": [],
+ "log": [
+  {
+   "em": "2026-09-30T23:31:12.107Z",
+   "quem": "Vitória Karoline",
+   "acao": "perfil de instrutora criado"
+  }
+ ]
+}
