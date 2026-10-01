@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T13:18:17.589Z",
+ "atualizadoEm": "2026-10-01T13:27:10.605Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -53,6 +53,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-01T13:27:10.605Z",
+   "quem": "Vitória Karoline",
+   "acao": "acesso do gestor atualizado"
+  },
   {
    "em": "2026-10-01T13:18:17.589Z",
    "quem": "Vitória Karoline",
@@ -110,7 +115,7 @@
   },
   "pesoTeste": 0.6,
   "notaMinIT": 7,
-  "gestorPinHash": null,
-  "gestorNome": ""
+  "gestorPinHash": "d8c0f94ba8c6d238dbba594d91753c688399daaecf1003e1512dc03291834ad7",
+  "gestorNome": "Elienai Silva"
  }
 }
