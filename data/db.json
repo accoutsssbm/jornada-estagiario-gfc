@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T16:50:51.058Z",
+ "atualizadoEm": "2026-10-01T16:55:13.382Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -72,6 +72,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-01T16:55:13.382Z",
+   "quem": "Julia Evelyn",
+   "acao": "nova dúvida em M01"
+  },
   {
    "em": "2026-10-01T16:50:51.058Z",
    "quem": "Julia Evelyn",
@@ -269,6 +274,14 @@
   }
  ],
  "duvidas": [
+  {
+   "id": "dmupryx2e6tzgy",
+   "estId": "emupk7xojynsqh",
+   "modId": "M01",
+   "texto": "Qual o critério deve ser atendido para que se afirme que o Forcast Comercial teve uma boa aderência?",
+   "em": "2026-10-01T16:55:13.382Z",
+   "resposta": null
+  },
   {
    "id": "dmuppm0303gooj",
    "estId": "emupk7xojynsqh",
