@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T12:04:23.619Z",
+ "atualizadoEm": "2026-10-01T13:10:48.008Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -44,6 +44,11 @@
  "encontros": [],
  "log": [
   {
+   "em": "2026-10-01T13:10:48.008Z",
+   "quem": "Vitória Karoline",
+   "acao": "capacidade de estudo atualizada"
+  },
+  {
    "em": "2026-10-01T12:04:23.619Z",
    "quem": "Julia Evelyn",
    "acao": "autoavaliação M01: Executou com apoio"
@@ -73,5 +78,19 @@
    "quem": "Vitória Karoline",
    "acao": "perfil de instrutora criado"
   }
- ]
+ ],
+ "duvidas": [],
+ "config": {
+  "capacidade": {
+   "1": 1,
+   "2": 2.5,
+   "3": 2.5,
+   "4": 2.5,
+   "5": 1
+  },
+  "pesoTeste": 0.6,
+  "notaMinIT": 7,
+  "gestorPinHash": null,
+  "gestorNome": ""
+ }
 }
