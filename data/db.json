@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T13:17:50.004Z",
+ "atualizadoEm": "2026-10-01T13:18:17.589Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -15,6 +15,15 @@
    "pinHash": "c3a541142fd2d93902d054c6319480a37c64195537b80f6c4b4658a1aa0e67c1",
    "ativo": false,
    "criadoEm": "2026-09-30T23:35:32.715Z"
+  },
+  {
+   "id": "emupk7xojynsqh",
+   "nome": "Julia Evelyn",
+   "email": "",
+   "inicio": "2026-07-13",
+   "pinHash": "1876077a3bee4b591fba48afc02e71dcd45eaad3fc37026e6935118167b2bf34",
+   "ativo": true,
+   "criadoEm": "2026-10-01T13:18:17.589Z"
   }
  ],
  "progresso": {
@@ -36,13 +45,19 @@
     "anotacoes": "Estou com duvidas\n",
     "tentativas": []
    }
-  }
+  },
+  "emupk7xojynsqh": {}
  },
  "ajustes": {},
  "questoesExtras": {},
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-01T13:18:17.589Z",
+   "quem": "Vitória Karoline",
+   "acao": "estagiário cadastrado: Julia Evelyn"
+  },
   {
    "em": "2026-10-01T13:17:50.004Z",
    "quem": "Vitória Karoline",
