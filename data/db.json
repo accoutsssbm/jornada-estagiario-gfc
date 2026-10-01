@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T13:10:48.008Z",
+ "atualizadoEm": "2026-10-01T13:17:50.004Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -13,7 +13,7 @@
    "email": "julia.evelyn@sotreq.com.br",
    "inicio": "2026-07-13",
    "pinHash": "c3a541142fd2d93902d054c6319480a37c64195537b80f6c4b4658a1aa0e67c1",
-   "ativo": true,
+   "ativo": false,
    "criadoEm": "2026-09-30T23:35:32.715Z"
   }
  ],
@@ -43,6 +43,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-01T13:17:50.004Z",
+   "quem": "Vitória Karoline",
+   "acao": "estagiário arquivado"
+  },
   {
    "em": "2026-10-01T13:10:48.008Z",
    "quem": "Vitória Karoline",
