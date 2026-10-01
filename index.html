@@ -220,25 +220,64 @@ details.acc>.corpo{padding:4px 16px 16px}
 }
 @media (max-width:520px){.g2,.g3,.g4,.perfis{grid-template-columns:1fr}}
 @media print{.rail,.acoes,.btn{display:none!important}.app{display:block}.topo{background:#fff;color:#000;box-shadow:none}.topo h1{text-shadow:none}}
+
+/* ---------- v3: novos componentes ---------- */
+.st-entrega{background:#FFF0C2;color:#7A5600;box-shadow:inset 0 0 0 1px var(--am-esc)}
+.st-ajuste{background:#FBE3D2;color:var(--lar)}
+.st-apresentacao{background:#E6E1F5;color:#4B3A8C}
+.grafico{border:1px solid var(--lin);padding:14px 16px 10px;background:#fff;margin-bottom:18px}
+.grafico h3{margin:0 0 2px}
+.grafico .leg{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--sub);margin:4px 0 6px}
+.grafico .leg i{display:inline-block;width:14px;height:4px;vertical-align:middle;margin-right:5px}
+.grafico svg{width:100%;height:auto;display:block}
+.sigilo{border:2px dashed var(--gra);padding:18px 20px;margin:22px 0;background:#FAFAF8}
+.sigilo .tag{display:inline-block;background:var(--car);color:var(--am);font-family:var(--cond);font-weight:700;padding:2px 10px;font-size:14px;text-transform:uppercase;margin-bottom:10px}
+.arquetipo{font-family:var(--cond);font-weight:700;font-size:30px;line-height:1.05;margin:4px 0 8px}
+.medidor{display:grid;grid-template-columns:150px 1fr 48px;gap:10px;align-items:center;font-size:14.5px;margin:6px 0}
+.faixa-mod{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0}
+.faixa-mod span{width:34px;height:30px;display:grid;place-items:center;font-family:var(--cond);font-weight:700;font-size:13px}
+.semaforo{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.semaforo i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.duvida{border:1px solid var(--lin);padding:14px 18px;margin-bottom:12px;background:#fff}
+.duvida .meta{font-size:13px;color:var(--sub);margin-bottom:6px}
+.duvida .perg{white-space:pre-wrap;font-weight:500}
+.duvida .resp{background:#EEF3FA;border-left:4px solid var(--azu);padding:8px 14px;margin-top:10px;white-space:pre-wrap}
+.duvida.aberta{border-left:5px solid var(--am)}
+.secoes-it{counter-reset:it;list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.secoes-it li{counter-increment:it;border:1px solid var(--lin);padding:10px 12px 10px 48px;position:relative;font-size:14.5px;background:#fff}
+.secoes-it li::before{content:counter(it);position:absolute;left:12px;top:8px;font-family:var(--cond);font-weight:700;font-size:26px;color:var(--gra)}
+.secoes-it b{display:block}
+.arquivos{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.rubrica{display:grid;grid-template-columns:1fr 110px;gap:8px 16px;align-items:center}
+.rubrica small{display:block;color:var(--sub)}
+.relatorio-doc{max-width:860px}
+.relatorio-doc .cab{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:3px solid var(--car);padding-bottom:10px;margin-bottom:18px}
+.relatorio-doc dl{display:grid;grid-template-columns:200px 1fr;gap:6px 14px;margin:0}
+.relatorio-doc dt{color:var(--sub);font-size:14px}
+.relatorio-doc dd{margin:0;font-weight:500}
+.texto-livre{white-space:pre-wrap;background:var(--nev);padding:10px 14px;margin:4px 0 14px}
+.cap-semana{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.relatorio-doc dl{grid-template-columns:1fr}.medidor{grid-template-columns:110px 1fr 40px}.cap-semana{grid-template-columns:repeat(3,1fr)}}
+@media print{.sigilo{display:none}.relatorio-doc{max-width:none}.texto-livre{background:#fff;border:1px solid #ccc}}
 </style>
 </head>
 <body>
 <div id="app"><div class="carregando">Carregando a trilha…</div></div>
-
 <script src="config.js"></script>
 <script src="curriculo.js"></script>
 <script>
 "use strict";
 /* =====================================================================
-   TRILHA GFC — Sotreq · Engenharia de Mineração Norte
-   Interface de controle de aprendizagem dos estagiários do GFC, baseada
-   no PDCA do plano de imersão. Base de dados: um arquivo JSON versionado
-   num repositório GitHub (API de Contents) ou, sem token, no navegador.
+   TRILHA GFC v3 — Sotreq · Engenharia de Mineração Norte
+   Controle de aprendizagem dos estagiários do GFC baseado no PDCA.
+   Perfis: instrutora, estagiário e gestor (somente leitura).
+   Base de dados: arquivo JSON num repositório GitHub (API de Contents).
    ===================================================================== */
 
 const C = window.CURRICULO;
 const CFG = window.GFC_CONFIG || {};
 const K_CFG = "gfc_trilha_cfg", K_DB = "gfc_trilha_db", K_SES = "gfc_trilha_sessao", K_RASC = "gfc_trilha_rascunho_";
+const MODELO_IT = "modelos/Template_Instrucao_Tecnica_GFC.pptx";
 const S = { db: null, sha: null, user: null, salvando: false, erroCarga: null };
 
 /* ------------------------------ utilidades ------------------------------ */
@@ -254,29 +293,37 @@ const fmtHora = s => { if (!s) return "—"; const d = new Date(s); return d.toL
 const util = d => d.getDay() !== 0 && d.getDay() !== 6;
 function addUteis(s, n) { const d = parse(s); let k = 0; while (k < n) { d.setDate(d.getDate() + 1); if (util(d)) k++; } return iso(d); }
 function uteisEntre(a, b) { let sinal = 1; if (b < a) { [a, b] = [b, a]; sinal = -1; } const d = parse(a), e = parse(b); let k = 0; while (d < e) { d.setDate(d.getDate() + 1); if (util(d)) k++; } return k * sinal; }
-const nota1 = n => (Math.round(n * 10) / 10).toFixed(1).replace(".", ",");
+const maxData = (a, b) => (a > b ? a : b);
+const nota1 = n => n == null || isNaN(n) ? "—" : (Math.round(n * 10) / 10).toFixed(1).replace(".", ",");
+const pct = n => n == null || isNaN(n) ? "—" : Math.round(n) + "%";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const media = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
 async function hashPin(salt, pin) {
   const txt = `gfc|${salt}|${pin}`;
-  if (window.crypto?.subtle) {
-    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt));
-    return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
-  }
+  if (window.crypto?.subtle) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
   let h = 5381; for (const c of txt) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return "djb" + h.toString(16);
 }
 function b64enc(str) { const by = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode.apply(null, by.subarray(i, i + 0x8000)); return btoa(bin); }
 function b64dec(b64) { const bin = atob(b64.replace(/\s/g, "")); const by = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) by[i] = bin.charCodeAt(i); return new TextDecoder().decode(by); }
-function toast(msg, erro) { $$(".toast").forEach(x => x.remove()); const t = document.createElement("div"); t.className = "toast" + (erro ? " erro" : ""); t.setAttribute("role", "status"); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), erro ? 6000 : 3000); }
+function arquivoB64(f) { return new Promise((ok, err) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1]); r.onerror = err; r.readAsDataURL(f); }); }
+const nomeSeguro = n => n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "_").slice(-80);
+function toast(msg, erro) { $$(".toast").forEach(x => x.remove()); const t = document.createElement("div"); t.className = "toast" + (erro ? " erro" : ""); t.setAttribute("role", "status"); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), erro ? 6000 : 3200); }
+function hashStr(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); }
+function embaralhar(arr, seed) { const a = [...arr]; let x = seed || 1; for (let i = a.length - 1; i > 0; i--) { x = (x * 9301 + 49297) % 233280; const j = Math.floor(x / 233280 * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 /* ------------------------------ armazenamento ------------------------------ */
+const CAP_PADRAO = { 1: 1, 2: 2.5, 3: 2.5, 4: 2.5, 5: 1 };
 function novoDB() {
-  return { versao: 1, criadoEm: new Date().toISOString(), atualizadoEm: null,
+  return { versao: 3, criadoEm: new Date().toISOString(), atualizadoEm: null,
     instrutor: { nome: "", pinHash: null }, estagiarios: [], progresso: {}, ajustes: {},
-    questoesExtras: {}, questoesOff: {}, encontros: [], log: [] };
+    questoesExtras: {}, questoesOff: {}, encontros: [], duvidas: [], log: [],
+    config: { capacidade: { ...CAP_PADRAO }, pesoTeste: 0.6, notaMinIT: 7, gestorPinHash: null, gestorNome: "" } };
 }
 function migrar(db) {
   const base = novoDB();
   for (const k of Object.keys(base)) if (db[k] === undefined) db[k] = base[k];
+  db.config = Object.assign({}, base.config, db.config || {});
+  db.config.capacidade = Object.assign({}, CAP_PADRAO, db.config.capacidade || {});
   return db;
 }
 const Store = {
@@ -287,18 +334,18 @@ const Store = {
     if (c.modo === "github" && (!c.owner || !c.repo || !c.token)) c.incompleto = true;
     return c;
   },
+  gh() { const c = this.cfg(); return c.modo === "github" && !c.incompleto; },
   salvarCfg(c) { const { incompleto, ...r } = c; localStorage.setItem(K_CFG, JSON.stringify(r)); },
-  url(c) { return `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`; },
+  url(c, path) { return `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${(path || c.path).split("/").map(encodeURIComponent).join("/")}`; },
   hdr(c, extra) { return Object.assign({ Accept: "application/vnd.github+json", Authorization: `Bearer ${c.token}`, "X-GitHub-Api-Version": "2022-11-28" }, extra || {}); },
   async ghGet(c = this.cfg()) {
     const u = this.url(c) + `?ref=${encodeURIComponent(c.branch)}&t=${Date.now()}`;
     const r = await fetch(u, { headers: this.hdr(c), cache: "no-store" });
     if (r.status === 404) return { db: null, sha: null };
     if (r.status === 401) throw new Error("Token do GitHub inválido ou expirado. Gere um novo e salve em Configurações.");
-    if (r.status === 403) throw new Error("O token não tem permissão de leitura neste repositório (Contents: Read and write).");
+    if (r.status === 403) throw new Error("O token não tem permissão neste repositório (Contents: Read and write).");
     if (!r.ok) throw new Error(`GitHub respondeu ${r.status} ao ler a base.`);
-    const j = await r.json();
-    let txt;
+    const j = await r.json(); let txt;
     if (j.content) txt = b64dec(j.content);
     else { const r2 = await fetch(u, { headers: this.hdr(c, { Accept: "application/vnd.github.raw+json" }), cache: "no-store" }); txt = await r2.text(); }
     return { db: JSON.parse(txt), sha: j.sha };
@@ -310,166 +357,287 @@ const Store = {
     if (r.status === 409 || r.status === 422) { const e = new Error("conflito"); e.conflito = true; throw e; }
     if (r.status === 401 || r.status === 403) throw new Error("O token não tem permissão de escrita neste repositório.");
     if (!r.ok) throw new Error(`GitHub respondeu ${r.status} ao gravar a base.`);
-    const j = await r.json(); return j.content.sha;
+    return (await r.json()).content.sha;
+  },
+  async enviarArquivo(path, file) {
+    const c = this.cfg(); const content = await arquivoB64(file);
+    for (let i = 0; i < 3; i++) {
+      const p = i ? path.replace(/(\.[^.]*)?$/, m => `-${i}${m}`) : path;
+      const r = await fetch(this.url(c, p), { method: "PUT", headers: this.hdr(c, { "Content-Type": "application/json" }), body: JSON.stringify({ message: `Trilha GFC: entrega ${p}`, content, branch: c.branch }) });
+      if (r.ok) return p;
+      if (r.status !== 422) throw new Error(`Falha ao enviar ${file.name} (GitHub ${r.status}).`);
+    }
+    throw new Error(`Não foi possível enviar ${file.name}.`);
+  },
+  async baixarArquivo(path, nome) {
+    const c = this.cfg();
+    const r = await fetch(this.url(c, path) + `?ref=${encodeURIComponent(c.branch)}`, { headers: this.hdr(c, { Accept: "application/vnd.github.raw+json" }), cache: "no-store" });
+    if (!r.ok) throw new Error(`Não foi possível baixar (GitHub ${r.status}).`);
+    const blob = await r.blob(); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nome || path.split("/").pop(); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   },
   async carregar() {
     const c = this.cfg();
-    if (c.modo === "github" && !c.incompleto) {
-      const { db, sha } = await this.ghGet(c);
-      S.db = migrar(db || novoDB()); S.sha = sha;
-    } else {
-      S.db = migrar(JSON.parse(localStorage.getItem(K_DB) || "null") || novoDB()); S.sha = null;
-    }
+    if (this.gh()) { const { db, sha } = await this.ghGet(c); S.db = migrar(db || novoDB()); S.sha = sha; }
+    else { S.db = migrar(JSON.parse(localStorage.getItem(K_DB) || "null") || novoDB()); S.sha = null; }
   },
   async gravar(mut, msg) {
-    const c = this.cfg();
-    S.salvando = true; atualizarSync();
+    const c = this.cfg(); S.salvando = true; atualizarSync();
     try {
-      if (c.modo !== "github" || c.incompleto) {
-        mut(S.db); S.db.atualizadoEm = new Date().toISOString();
-        localStorage.setItem(K_DB, JSON.stringify(S.db)); return;
-      }
+      if (!this.gh()) { mut(S.db); S.db.atualizadoEm = new Date().toISOString(); localStorage.setItem(K_DB, JSON.stringify(S.db)); return; }
       for (let i = 0; i < 4; i++) {
-        let { db, sha } = await this.ghGet(c);
-        db = migrar(db || novoDB()); mut(db); db.atualizadoEm = new Date().toISOString();
+        let { db, sha } = await this.ghGet(c); db = migrar(db || novoDB()); mut(db); db.atualizadoEm = new Date().toISOString();
         try { S.sha = await this.ghPut(db, sha, msg, c); S.db = db; return; }
         catch (e) { if (e.conflito && i < 3) { await sleep(500 * (i + 1)); continue; } throw e; }
       }
     } finally { S.salvando = false; atualizarSync(); }
   }
 };
-function registrar(db, acao) {
-  const quem = S.user?.tipo === "instrutor" ? (db.instrutor.nome || "Instrutora") : (db.estagiarios.find(e => e.id === S.user?.id)?.nome || "—");
-  db.log.unshift({ em: new Date().toISOString(), quem, acao });
-  if (db.log.length > 400) db.log.length = 400;
+function quemSou(db) {
+  if (S.user?.tipo === "instrutor") return db.instrutor.nome || "Instrutora";
+  if (S.user?.tipo === "gestor") return db.config.gestorNome || "Gestor";
+  return db.estagiarios.find(e => e.id === S.user?.id)?.nome || "—";
 }
+function registrar(db, acao) { db.log.unshift({ em: new Date().toISOString(), quem: quemSou(db), acao }); if (db.log.length > 500) db.log.length = 500; }
 async function salvar(mut, msg, ok) {
   try { await Store.gravar(db => { mut(db); registrar(db, msg); }, "Trilha GFC: " + msg); if (ok) toast(ok); render(); return true; }
   catch (e) { console.error(e); toast("Não foi possível salvar: " + e.message, true); render(); return false; }
 }
-/* gravação agrupada para checklist e anotações (evita um commit por clique) */
 let fila = [], filaTimer = null;
 function agendar(mut, msg) {
-  fila.push(mut); clearTimeout(filaTimer);
-  if (Store.cfg().modo !== "github") { mut(S.db); fila = []; localStorage.setItem(K_DB, JSON.stringify(S.db)); return; }
-  mut(S.db); atualizarSync(true);
-  filaTimer = setTimeout(async () => {
-    const muts = fila; fila = [];
+  clearTimeout(filaTimer);
+  if (!Store.gh()) { mut(S.db); localStorage.setItem(K_DB, JSON.stringify(S.db)); return; }
+  fila.push(mut); mut(S.db); atualizarSync(true);
+  filaTimer = setTimeout(async () => { const muts = fila; fila = [];
     try { await Store.gravar(db => { muts.forEach(m => m(db)); registrar(db, msg); }, "Trilha GFC: " + msg); }
-    catch (e) { toast("Não foi possível salvar: " + e.message, true); }
-  }, 2200);
+    catch (e) { toast("Não foi possível salvar: " + e.message, true); } }, 2200);
 }
 function atualizarSync(pendente) {
-  const el = $("#sync"); if (!el) return;
-  const c = Store.cfg(); const gh = c.modo === "github" && !c.incompleto;
-  el.innerHTML = S.salvando || pendente ? `<span class="dot salvando"></span>Salvando…`
-    : gh ? `<span class="dot"></span>GitHub · ${esc(c.repo)}` : `<span class="dot local"></span>Salvo só neste navegador`;
+  const el = $("#sync"); if (!el) return; const c = Store.cfg();
+  el.innerHTML = S.salvando || pendente ? `<span class="dot salvando"></span>Salvando…` : Store.gh() ? `<span class="dot"></span>GitHub · ${esc(c.repo)}` : `<span class="dot local"></span>Salvo só neste navegador`;
 }
+
+/* ------------------------------ calendário de estudo ------------------------------ */
+const DIAS = { 1: "Seg", 2: "Ter", 3: "Qua", 4: "Qui", 5: "Sex" };
+const cap = () => Object.assign({}, CAP_PADRAO, S.db?.config?.capacidade || {});
+const horasSemana = () => [1, 2, 3, 4, 5].reduce((a, d) => a + Number(cap()[d] || 0), 0);
+function addHoras(ini, horas) {
+  const c = cap(); const d = parse(ini); let acc = 0, g = 0;
+  if (horasSemana() <= 0) return addUteis(ini, Math.ceil(horas));
+  while (acc < horas - 1e-9 && g < 2000) { d.setDate(d.getDate() + 1); acc += Number(c[d.getDay()] || 0); g++; }
+  return iso(d);
+}
+const fmtH = h => `${String(Math.round(h * 10) / 10).replace(".", ",")} h`;
 
 /* ------------------------------ regras da trilha ------------------------------ */
 const MODS = C.modulos;
 const modPorId = id => MODS.find(m => m.id === id);
 const faseDe = n => C.fases.find(f => f.n === n);
 const est = id => S.db.estagiarios.find(e => e.id === id);
-function ajuste(eid, mid) { const m = modPorId(mid); const a = S.db.ajustes?.[eid]?.[mid] || {}; return { dias: a.dias ?? m.dias, notaMin: a.notaMin ?? m.notaMin, escopo: a.escopo ?? true }; }
-function prog(eid, mid) { return S.db.progresso?.[eid]?.[mid] || null; }
-function questoesDe(mid) {
-  const m = modPorId(mid);
-  const extras = (S.db.questoesExtras?.[mid] || []).map(q => ({ ...q, extra: true }));
-  return [...m.questoes, ...extras].filter(q => !S.db.questoesOff?.[q.id]);
-}
+const ativos = () => S.db.estagiarios.filter(e => e.ativo !== false);
+function ajuste(eid, mid) { const m = modPorId(mid); const a = S.db.ajustes?.[eid]?.[mid] || {}; return { horasEstudo: a.horasEstudo ?? m.horasEstudo, horasIT: a.horasIT ?? m.horasIT, notaMin: a.notaMin ?? m.notaMin, escopo: a.escopo ?? true }; }
+const prog = (eid, mid) => S.db.progresso?.[eid]?.[mid] || null;
+function questoesDe(mid) { const m = modPorId(mid); const ex = (S.db.questoesExtras?.[mid] || []).map(q => ({ ...q, extra: true })); return [...m.questoes, ...ex].filter(q => !S.db.questoesOff?.[q.id]); }
+function tagsQ(q) { if (q.b && q.e) return q; for (const m of MODS) { const o = m.questoes.find(x => x.id === q.id); if (o) return o; } return { b: q.tipo === "mc" ? 1 : 4, e: "C" }; }
 function situacao(eid, mid) {
   const i = MODS.findIndex(m => m.id === mid); const aj = ajuste(eid, mid); const p = prog(eid, mid);
   if (!aj.escopo && (!p || p.status !== "aprovado")) return { st: "dispensado", p, aj };
-  if (!p) {
-    const liberado = MODS.slice(0, i).every(m => { const s = situacao(eid, m.id).st; return s === "aprovado" || s === "dispensado"; });
-    return { st: liberado ? "disponivel" : "bloqueado", p, aj };
-  }
-  if (p.status === "estudo" || p.status === "reciclagem") {
-    const testeOk = p.liberado || hoje() >= p.prazo;
-    return { st: testeOk ? "teste" : p.status, base: p.status, p, aj, faltam: Math.max(0, uteisEntre(hoje(), p.prazo)) };
-  }
+  if (!p) { const lib = MODS.slice(0, i).every(m => ["aprovado", "dispensado"].includes(situacao(eid, m.id).st)); return { st: lib ? "disponivel" : "bloqueado", p, aj }; }
+  if (p.status === "estudo" || p.status === "reciclagem") { const ok = p.liberado || hoje() >= p.prazo; return { st: ok ? "teste" : p.status, p, aj, faltam: Math.max(0, uteisEntre(hoje(), p.prazo)) }; }
+  if (p.status === "ajuste_it") return { st: "ajuste", p, aj };
   return { st: p.status, p, aj };
 }
-const ROT = { bloqueado: "Bloqueado", disponivel: "Pronto para iniciar", estudo: "Em estudo", teste: "Teste liberado", avaliacao: "Aguardando avaliação", reciclagem: "Reciclagem", aprovado: "Aprovado", dispensado: "Fora do escopo" };
+const ROT = { bloqueado: "Bloqueado", disponivel: "Pronto para iniciar", estudo: "Em estudo", teste: "Teste liberado", avaliacao: "Teste em avaliação", reciclagem: "Reciclagem", entrega: "Entrega da IT", ajuste: "Ajuste da IT", apresentacao: "Aguardando apresentação", aprovado: "Concluído", dispensado: "Fora do escopo" };
+const COR = { bloqueado: "#ECECEA", disponivel: "#FFF4D1", estudo: "#CFE0F4", teste: "#FDB913", avaliacao: "#E2D2EC", reciclagem: "#F6C9A8", entrega: "#FFE08A", ajuste: "#F6C9A8", apresentacao: "#D6CFF0", aprovado: "#3C3C3C", dispensado: "#FFFFFF" };
 const chip = st => `<span class="st st-${st}">${ROT[st]}</span>`;
-function etapaPDCA(st) { return { bloqueado: "", disponivel: "P", estudo: "D", reciclagem: "D", teste: "C", avaliacao: "C", aprovado: "A", dispensado: "" }[st] ?? ""; }
-function moduloAtual(eid) {
-  const ordem = ["avaliacao", "teste", "reciclagem", "estudo", "disponivel"];
-  for (const s of ordem) { const m = MODS.find(m => situacao(eid, m.id).st === s); if (m) return m; }
-  return null;
-}
+const etapaPDCA = st => ({ disponivel: "P", estudo: "D", reciclagem: "D", teste: "C", avaliacao: "C", entrega: "A", ajuste: "A", apresentacao: "A", aprovado: "A" }[st] ?? "");
+function moduloAtual(eid) { for (const s of ["avaliacao", "apresentacao", "teste", "entrega", "ajuste", "reciclagem", "estudo", "disponivel"]) { const m = MODS.find(m => situacao(eid, m.id).st === s); if (m) return m; } return null; }
 function calcNota(t) { let tot = 0, ob = 0; for (const q of t.questoes) { tot += q.peso; ob += Number(t.notas?.[q.id]?.nota ?? 0); } return tot ? ob / tot * 10 : 0; }
+const RUBRICA = [
+  { k: "conteudo", nome: "Conteúdo técnico e completude", desc: "Passos corretos, regras, exceções e pontos de atenção do processo", peso: 0.35 },
+  { k: "estrutura", nome: "Estrutura e clareza da IT", desc: "Segue o modelo, mapa mental legível, alguém consegue executar só lendo", peso: 0.2 },
+  { k: "dominio", nome: "Domínio na apresentação", desc: "Explica sem ler, responde às perguntas, segurança no assunto", peso: 0.3 },
+  { k: "impacto", nome: "Visão de impacto no processo", desc: "Conecta a etapa a indicadores, RMC, forecast e outras áreas", peso: 0.15 }
+];
+const notaRubrica = n => RUBRICA.reduce((a, r) => a + r.peso * Number(n[r.k] ?? 0), 0);
+function notaFinal(p) { if (p?.notaTeste == null) return null; if (p.notaIT == null) return p.notaTeste; const w = S.db.config.pesoTeste ?? 0.6; return w * p.notaTeste + (1 - w) * p.notaIT; }
+function escopoDe(eid) { return MODS.filter(m => ajuste(eid, m.id).escopo || prog(eid, m.id)?.status === "aprovado"); }
+function planejamento(eid) {
+  const e = est(eid); if (!e?.inicio) return [];
+  let cur = e.inicio; const out = [];
+  for (const m of escopoDe(eid)) { const a = ajuste(eid, m.id); const fimE = addHoras(cur, a.horasEstudo); const fim = addHoras(fimE, a.horasIT); out.push({ m, ini: cur, fimEstudo: fimE, fim }); cur = fim; }
+  return out;
+}
+function previsao(eid) {
+  let cur = hoje(); let pend = false;
+  for (const m of escopoDe(eid)) {
+    const s = situacao(eid, m.id); const p = s.p; const a = s.aj;
+    if (s.st === "aprovado") continue; pend = true;
+    if (["estudo", "reciclagem", "teste"].includes(s.st)) { cur = maxData(cur, p.prazo); cur = addUteis(cur, 1); cur = addHoras(cur, a.horasIT); }
+    else if (s.st === "avaliacao") { cur = addUteis(cur, 1); cur = addHoras(cur, a.horasIT); }
+    else if (s.st === "entrega" || s.st === "ajuste") { cur = maxData(cur, p.prazoEntrega || cur); cur = addUteis(cur, 1); }
+    else if (s.st === "apresentacao") cur = addUteis(cur, 1);
+    else cur = addHoras(cur, a.horasEstudo + a.horasIT);
+  }
+  return pend ? cur : null;
+}
 function indicadores(eid) {
-  const e = est(eid); const escopo = MODS.filter(m => ajuste(eid, m.id).escopo || prog(eid, m.id)?.status === "aprovado");
-  let aprov = 0, pend = 0, atrasos = [], plan = 0, real = 0, reprov = 0, notas1 = [], gatilhos = [], restantes = 0, total = 0;
-  for (const m of escopo) {
-    const s = situacao(eid, m.id); const p = s.p; total += s.aj.dias;
-    if (p?.tentativas?.length) {
-      const av = p.tentativas.filter(t => t.status === "avaliada");
-      reprov += av.filter(t => !t.aprovado).length;
-      if (av[0]) notas1.push(av[0].nota);
-      if (av.filter(t => !t.aprovado).length >= 2 && s.st !== "aprovado") gatilhos.push({ tipo: "ajuste", txt: `${m.id} reprovado 2× — voltar o processo ao modo acompanhado ou reduzir sites.` });
-    }
+  const esc0 = escopoDe(eid); let aprov = 0, pendT = 0, pendIT = 0, reprov = 0, reprovIT = 0, plan = 0, real = 0; const n1 = [], nf = [], gat = [];
+  for (const m of esc0) {
+    const s = situacao(eid, m.id); const p = s.p;
+    const av = (p?.tentativas || []).filter(t => t.status === "avaliada");
+    reprov += av.filter(t => !t.aprovado).length; if (av[0]) n1.push(av[0].nota);
+    reprovIT += (p?.entregas || []).filter(x => x.status === "avaliada" && !x.aprovado).length;
+    if (av.filter(t => !t.aprovado).length >= 2 && s.st !== "aprovado") gat.push(`${m.id}: reprovado 2× no teste — voltar o processo ao modo acompanhado.`);
+    if (s.st === "avaliacao") pendT++; if (s.st === "apresentacao") pendIT++;
+    if (s.st === "teste" && uteisEntre(p.prazo, hoje()) > 2) gat.push(`${m.id}: teste liberado há ${uteisEntre(p.prazo, hoje())} dias úteis sem envio.`);
+    if ((s.st === "entrega" || s.st === "ajuste") && p.prazoEntrega && hoje() > p.prazoEntrega) gat.push(`${m.id}: prazo da IT venceu em ${fmt(p.prazoEntrega)}.`);
     if (s.st === "aprovado") {
-      aprov++; plan += s.aj.dias; real += Math.max(1, uteisEntre(p.inicio, p.aprovadoEm));
-      const ult = p.tentativas.at(-1); if (ult && ult.nota >= 9 && p.aprovadoEm < p.prazoOriginal) gatilhos.push({ tipo: "acel", txt: `${m.id} aprovado antes do prazo com ${nota1(ult.nota)} — considerar acelerar a fase.` });
-    } else {
-      if (s.st === "avaliacao") pend++;
-      if ((s.st === "teste") && uteisEntre(p.prazo, hoje()) > 2) atrasos.push({ m, dias: uteisEntre(p.prazo, hoje()) });
-      restantes += p && s.st !== "avaliacao" ? Math.max(0, uteisEntre(hoje(), p.prazo)) + 1 : (s.st === "avaliacao" ? 1 : s.aj.dias);
+      aprov++; const f = notaFinal(p); if (f != null) nf.push(f);
+      if (p.inicio && p.aprovadoEm) { plan += Math.max(1, uteisEntre(p.inicio, addHoras(p.inicio, s.aj.horasEstudo + s.aj.horasIT))); real += Math.max(1, uteisEntre(p.inicio, p.aprovadoEm)); }
     }
   }
-  atrasos.forEach(a => gatilhos.push({ tipo: "ajuste", txt: `${a.m.id}: teste liberado há ${a.dias} dias úteis sem envio — conversar na reunião semanal.` }));
-  const fimPlanejado = e?.inicio ? addUteis(e.inicio, total) : null;
-  const previsao = aprov === escopo.length ? null : addUteis(hoje(), restantes);
-  return { total: escopo.length, aprov, pend, atrasos, reprov, gatilhos,
-    media: notas1.length ? notas1.reduce((a, b) => a + b, 0) / notas1.length : null,
-    assert: real ? plan / real * 100 : null, fimPlanejado, previsao };
+  const pl = planejamento(eid);
+  return { total: esc0.length, aprov, pendT, pendIT, reprov, reprovIT, gatilhos: gat, media1: media(n1), mediaFinal: media(nf), assert: real ? plan / real * 100 : null, fimPlanejado: pl.at(-1)?.fim || null, previsao: previsao(eid) };
 }
-function pendentesAvaliacao() {
-  const out = [];
-  for (const e of S.db.estagiarios) for (const m of MODS) { const p = prog(e.id, m.id); const t = p?.tentativas?.find(t => t.status === "pendente"); if (t) out.push({ e, m, t }); }
-  return out.sort((a, b) => a.t.enviadoEm.localeCompare(b.t.enviadoEm));
+function semaforo(ind) {
+  if (!ind.previsao) return `<span class="semaforo"><i style="background:var(--ok)"></i>Concluída</span>`;
+  const d = ind.fimPlanejado ? uteisEntre(ind.fimPlanejado, ind.previsao) : 0;
+  if (d <= 0) return `<span class="semaforo"><i style="background:var(--ok)"></i>No prazo</span>`;
+  if (d <= 5) return `<span class="semaforo"><i style="background:var(--am-esc)"></i>Atenção · ${d} d.u. além</span>`;
+  return `<span class="semaforo"><i style="background:var(--ver)"></i>Atrasado · ${d} d.u. além</span>`;
+}
+function pendencias() {
+  const testes = [], entregas = [];
+  for (const e of ativos()) for (const m of MODS) { const p = prog(e.id, m.id); const t = p?.tentativas?.find(t => t.status === "pendente"); if (t) testes.push({ e, m, t }); const x = p?.entregas?.find(x => x.status === "pendente"); if (x) entregas.push({ e, m, x }); }
+  const duv = S.db.duvidas.filter(d => !d.resposta && est(d.estId)?.ativo !== false);
+  return { testes, entregas, duv, total: testes.length + entregas.length };
 }
 
-/* ------------------------------ PDCA (anel) ------------------------------ */
+/* ------------------------------ perfil (sigiloso) ------------------------------ */
+const EIXOS = { P: "Procedimental (como fazer)", C: "Conceitual (por que existe)", R: "Relacional (quem, canal, papéis)", A: "Analítico (cálculo, indicadores, impacto)" };
+const BLOOM = { mem: "Memorização", apl: "Aplicação em casos", ana: "Análise e julgamento" };
+const ESTILOS = { AT: "Ativo", RE: "Reflexivo", TE: "Teórico", PR: "Pragmático" };
+const ITENS_APRENDI = [
+  ["AT", "Fazer direto no sistema, mesmo errando no começo"], ["PR", "Pegar uma demanda real e resolver"],
+  ["RE", "Observar alguém executando antes de tentar"], ["TE", "Entender a lógica e o porquê de cada etapa antes de executar"],
+  ["RE", "Revisar minhas anotações com calma depois"], ["PR", "Ver um exemplo de como aplicar no dia a dia do site"],
+  ["TE", "Ler o manual e a estratégia por completo"], ["AT", "Testar caminhos diferentes para ver o que acontecia"]];
+const ITENS_SITUACAO = [["AT", "Tento resolver na hora e ajusto pelo caminho"], ["RE", "Espero, observo e junto informação antes de agir"], ["TE", "Procuro a regra ou o princípio por trás do caso"], ["PR", "Busco a solução mais prática que já funcionou antes"]];
+const LEITURA = {
+  AT: { t: "Aprende fazendo", d: "Rende mais quando coloca a mão no sistema cedo. Tende a perder o interesse em leituras longas e pode pular etapas de conferência.", r: ["Libere práticas no sistema logo no início de cada módulo.", "Cobre conferência de datas e regras antes de salvar (risco de pressa).", "Use as dissertativas para forçar a reflexão sobre impacto."] },
+  RE: { t: "Observa antes de agir", d: "Precisa ver o processo acontecendo e ter tempo para organizar as ideias. Costuma errar pouco, mas demora para assumir a execução sozinho.", r: ["Garanta acompanhamento (shadowing) antes da execução.", "Dê prazos claros para a transição para 'executou sozinho'.", "Valorize as anotações e use-as na conversa semanal."] },
+  TE: { t: "Precisa entender o porquê", d: "Aprende pela lógica e pela estrutura do processo. Bom em ITs e em visão de impacto; pode travar em situações sem regra clara.", r: ["Mostre a estratégia e o fluxo completo antes dos detalhes de tela.", "Exponha a casos fora do manual para treinar decisão.", "Use-o para revisar e padronizar documentação."] },
+  PR: { t: "Busca aplicação imediata", d: "Engaja quando vê utilidade prática no dia a dia do site. Resolve bem casos reais; pode dar pouca atenção à teoria e às exceções.", r: ["Conecte cada módulo a uma demanda real do site.", "Reforce as exceções e regras (onde costuma errar).", "Cobre a explicação do 'por quê' nas apresentações."] }
+};
+function perfil(eid) {
+  const eix = { P: [0, 0], C: [0, 0], R: [0, 0], A: [0, 0] }, blo = { mem: [0, 0], apl: [0, 0], ana: [0, 0] }, est4 = { AT: 0, RE: 0, TE: 0, PR: 0 };
+  let mods = 0; const calib = [], pont = [], duvMod = [], anot = [], chk = [];
+  for (const m of MODS) {
+    const p = prog(eid, m.id); if (!p) continue;
+    duvMod.push(S.db.duvidas.filter(d => d.estId === eid && d.modId === m.id).length);
+    anot.push((p.anotacoes || "").length); chk.push(Object.values(p.checklist || {}).filter(Boolean).length / Math.max(1, m.checklist.length));
+    const t = (p.tentativas || []).find(t => t.status === "avaliada");
+    if (t) {
+      mods++;
+      for (const q of t.questoes) { const g = tagsQ(q); const n = Number(t.notas?.[q.id]?.nota ?? 0); const b = g.b >= 4 ? "ana" : g.b === 3 ? "apl" : "mem";
+        if (eix[g.e]) { eix[g.e][0] += n; eix[g.e][1] += q.peso; } blo[b][0] += n; blo[b][1] += q.peso; }
+      pont.push(uteisEntre(p.prazo, t.enviadoEm.slice(0, 10)) <= 2 ? 1 : 0);
+    }
+    for (const x of (p.entregas || [])) {
+      (x.relatorio?.r1 || []).forEach(k => est4[k] = (est4[k] || 0) + 1);
+      if (x.relatorio?.r2) est4[x.relatorio.r2] += 1.5;
+      if (x.status === "avaliada" && x.relatorio?.confianca) { const f = notaFinal({ notaTeste: p.notaTeste, notaIT: x.nota }); if (f != null) calib.push((x.relatorio.confianca - 1) / 4 * 10 - f); }
+    }
+  }
+  const r = o => Object.fromEntries(Object.entries(o).map(([k, [a, b]]) => [k, b ? a / b * 100 : null]));
+  const E = r(eix), B = r(blo); const totE = Object.values(est4).reduce((a, b) => a + b, 0);
+  const estPct = Object.fromEntries(Object.entries(est4).map(([k, v]) => [k, totE ? v / totE * 100 : null]));
+  const ordE = Object.entries(estPct).filter(x => x[1] != null).sort((a, b) => b[1] - a[1]);
+  const domE = ordE[0]?.[0] || null, segE = ordE[1] && ordE[1][1] >= ordE[0][1] - 8 ? ordE[1][0] : null;
+  const ordX = Object.entries(E).filter(x => x[1] != null).sort((a, b) => b[1] - a[1]);
+  const conf = mods >= 5 ? "alta" : mods >= 2 ? "média" : mods >= 1 ? "baixa" : null;
+  const cal = media(calib);
+  return { E, B, estPct, domE, segE, forte: ordX[0]?.[0], fraco: ordX.at(-1)?.[0], mods, conf, nEnt: totE,
+    calib: cal, pont: media(pont), duv: media(duvMod), anot: media(anot), chk: media(chk) };
+}
+
+/* ------------------------------ gráficos (SVG) ------------------------------ */
+const PAL = ["#3C3C3C", "#E3A400", "#1F5FA8", "#C4610A", "#2E7D32"];
+function grafLinhas({ labels, series, min = 0, max = 10, alt = 250, sufixo = "", passo }) {
+  const W = 680, H = alt, L = 40, R = 14, T = 14, B = 34, iw = W - L - R, ih = H - T - B;
+  const x = i => L + (labels.length <= 1 ? iw / 2 : i * iw / (labels.length - 1)); const y = v => T + ih - (v - min) / (max - min) * ih;
+  const st = passo || (max - min) / 5; let g = "";
+  for (let v = min; v <= max + 1e-9; v += st) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#E6E6E2"/><text x="${L - 6}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="#6a6a6a">${Math.round(v * 10) / 10}${sufixo}</text>`;
+  const sk = Math.ceil(labels.length / 16);
+  labels.forEach((l, i) => { if (i % sk === 0) g += `<text x="${x(i)}" y="${H - 12}" font-size="11" text-anchor="middle" fill="#6a6a6a">${esc(l)}</text>`; });
+  series.forEach((s, k) => {
+    const cor = s.cor || PAL[k]; let d = ""; let seg = false;
+    s.v.forEach((v, i) => { if (v == null) { seg = false; return; } d += `${seg ? "L" : "M"}${x(i)},${y(v)} `; seg = true; });
+    g += `<path d="${d}" fill="none" stroke="${cor}" stroke-width="${s.w || 2.5}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""}/>`;
+    if (!s.semPontos) s.v.forEach((v, i) => { if (v != null) g += `<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${cor}"><title>${esc(s.nome)} · ${esc(labels[i])}: ${Math.round(v * 10) / 10}${sufixo}</title></circle>`; });
+  });
+  return `<div class="leg">${series.map((s, k) => `<span><i style="background:${s.cor || PAL[k]}"></i>${esc(s.nome)}</span>`).join("")}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de linhas">${g}</svg>`;
+}
+function grafBarras({ labels, series, max, alt = 230, sufixo = "" }) {
+  const W = 680, H = alt, L = 40, R = 10, T = 12, B = 34, iw = W - L - R, ih = H - T - B;
+  const mx = max || Math.max(1, ...series.flatMap(s => s.v.filter(v => v != null))) * 1.1;
+  const gw = iw / labels.length, bw = Math.min(26, gw * 0.8 / series.length); let g = "";
+  for (let i = 0; i <= 4; i++) { const v = mx * i / 4, yy = T + ih - ih * i / 4; g += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="#E6E6E2"/><text x="${L - 6}" y="${yy + 4}" font-size="11" text-anchor="end" fill="#6a6a6a">${Math.round(v)}${sufixo}</text>`; }
+  labels.forEach((l, i) => {
+    const x0 = L + i * gw + (gw - bw * series.length) / 2;
+    series.forEach((s, k) => { const v = s.v[i]; if (v == null) return; const h = v / mx * ih; g += `<rect x="${x0 + k * bw}" y="${T + ih - h}" width="${bw - 2}" height="${h}" fill="${s.cor || PAL[k]}"><title>${esc(s.nome)} · ${esc(l)}: ${Math.round(v * 10) / 10}${sufixo}</title></rect>`; });
+    g += `<text x="${L + i * gw + gw / 2}" y="${H - 12}" font-size="11" text-anchor="middle" fill="#6a6a6a">${esc(l)}</text>`;
+  });
+  return `<div class="leg">${series.map((s, k) => `<span><i style="background:${s.cor || PAL[k]}"></i>${esc(s.nome)}</span>`).join("")}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de barras">${g}</svg>`;
+}
+function grafRadar(eixos, vals) {
+  const W = 380, cx = 190, cy = 170, R = 120, n = eixos.length; const pt = (i, r) => [cx + r * Math.sin(2 * Math.PI * i / n), cy - r * Math.cos(2 * Math.PI * i / n)];
+  let g = ""; [25, 50, 75, 100].forEach(p => { g += `<polygon points="${eixos.map((_, i) => pt(i, R * p / 100).join(",")).join(" ")}" fill="none" stroke="#E2E2DE"/>`; });
+  eixos.forEach((e, i) => { const [x, y] = pt(i, R); const [tx, ty] = pt(i, R + 30); const v = vals[i]; g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E2E2DE"/><text x="${tx}" y="${ty - 3}" font-size="13" font-weight="600" text-anchor="middle" fill="#232323">${esc(e)}</text><text x="${tx}" y="${ty + 12}" font-size="12" text-anchor="middle" fill="#5c5c5c">${v == null ? "sem dados" : Math.round(v) + "%"}</text>`; });
+  g += `<polygon points="${vals.map((v, i) => pt(i, R * (v ?? 0) / 100).join(",")).join(" ")}" fill="rgba(253,185,19,.45)" stroke="#232323" stroke-width="2"/>`;
+  vals.forEach((v, i) => { if (v == null) return; const [x, y] = pt(i, R * v / 100); g += `<circle cx="${x}" cy="${y}" r="4" fill="#232323"/>`; });
+  return `<svg viewBox="-30 0 ${W + 60} 340" role="img" aria-label="Radar de domínio">${g}</svg>`;
+}
+const medidor = (rot, v, cor) => `<div class="medidor"><span>${esc(rot)}</span><div class="barra"><i style="width:${Math.max(0, Math.min(100, v ?? 0))}%;${cor ? `background:${cor}` : ""}"></i></div><b>${pct(v)}</b></div>`;
+function regressao(ys) { const pts = ys.map((y, i) => [i, y]).filter(p => p[1] != null); if (pts.length < 2) return null; const n = pts.length, sx = pts.reduce((a, p) => a + p[0], 0), sy = pts.reduce((a, p) => a + p[1], 0), sxx = pts.reduce((a, p) => a + p[0] * p[0], 0), sxy = pts.reduce((a, p) => a + p[0] * p[1], 0); const b = (n * sxy - sx * sy) / (n * sxx - sx * sx || 1); return { b, a: (sy - b * sx) / n }; }
+function curvaS(eid) {
+  const e = est(eid); const pl = planejamento(eid); if (!e || !pl.length) return "";
+  const fim = maxData(pl.at(-1).fim, previsao(eid) || hoje()); const sem = Math.max(1, Math.ceil(uteisEntre(e.inicio, fim) / 5)) + 1;
+  const datas = Array.from({ length: sem }, (_, i) => addUteis(e.inicio, i * 5));
+  const planV = datas.map(d => pl.filter(x => x.fim <= d).length);
+  const cnt = d => escopoDe(eid).filter(m => { const p = prog(eid, m.id); return p?.status === "aprovado" && p.aprovadoEm <= d; }).length;
+  const realV = datas.map((d, i) => d <= hoje() ? cnt(d) : i > 0 && datas[i - 1] <= hoje() ? cnt(hoje()) : null);
+  return grafLinhas({ labels: datas.map((_, i) => "S" + i), series: [{ nome: "Planejado (acumulado)", v: planV, cor: "#B8B8B2", dash: "6 4", semPontos: true }, { nome: "Realizado (acumulado)", v: realV, cor: "#232323" }], min: 0, max: Math.max(pl.length, 1), passo: Math.max(1, Math.ceil(pl.length / 5)) });
+}
+
+/* ------------------------------ PDCA ------------------------------ */
 function anelPDCA(atual, concluido) {
   const ordem = ["P", "D", "C", "A"]; const ia = ordem.indexOf(atual);
-  const cor = (k, i) => concluido || (ia > -1 && i < ia) ? "#3C3C3C" : k === atual ? "#FDB913" : "#E6E6E2";
-  const txt = (k, i) => concluido || (ia > -1 && i < ia) ? "#fff" : k === atual ? "#232323" : "#9a9a9a";
+  const feito = i => concluido || (ia > -1 && i < ia);
   const quad = [["P", "M100,100 L100,8 A92,92 0 0,1 192,100 Z", 146, 74], ["D", "M100,100 L192,100 A92,92 0 0,1 100,192 Z", 146, 150], ["C", "M100,100 L100,192 A92,92 0 0,1 8,100 Z", 54, 150], ["A", "M100,100 L8,100 A92,92 0 0,1 100,8 Z", 54, 74]];
-  return `<svg viewBox="0 0 200 200" role="img" aria-label="Ciclo PDCA do módulo: etapa ${atual || "não iniciada"}">
-    ${quad.map(([k, d, x, y], i) => `<path d="${d}" fill="${cor(k, i)}" stroke="#fff" stroke-width="4"/><text x="${x}" y="${y + 12}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="38" fill="${txt(k, i)}">${k}</text>`).join("")}
-    <circle cx="100" cy="100" r="30" fill="#232323"/><text x="100" y="107" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="${concluido ? 18 : 20}" fill="#FDB913">${concluido ? "OK" : atual || "—"}</text></svg>`;
+  return `<svg viewBox="0 0 200 200" role="img" aria-label="Ciclo PDCA do módulo: etapa ${atual || "não iniciada"}">${quad.map(([k, d, x, y], i) => `<path d="${d}" fill="${feito(i) ? "#3C3C3C" : k === atual ? "#FDB913" : "#E6E6E2"}" stroke="#fff" stroke-width="4"/><text x="${x}" y="${y + 12}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="38" fill="${feito(i) ? "#fff" : k === atual ? "#232323" : "#9a9a9a"}">${k}</text>`).join("")}<circle cx="100" cy="100" r="30" fill="#232323"/><text x="100" y="107" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="${concluido ? 18 : 20}" fill="#FDB913">${concluido ? "OK" : atual || "—"}</text></svg>`;
 }
-function legendaPDCA(atual, concluido) {
-  const ordem = ["P", "D", "C", "A"]; const ia = ordem.indexOf(atual);
-  return `<div class="pdca-leg">${ordem.map((k, i) => `<div class="${concluido || (ia > -1 && i < ia) ? "feito" : k === atual ? "agora" : ""}"><b>${k}</b><span><strong>${C.pdca[k].nome}</strong>${C.pdca[k].texto}</span></div>`).join("")}</div>`;
-}
+function legendaPDCA(atual, concluido) { const o = ["P", "D", "C", "A"], ia = o.indexOf(atual); return `<div class="pdca-leg">${o.map((k, i) => `<div class="${concluido || (ia > -1 && i < ia) ? "feito" : k === atual ? "agora" : ""}"><b>${k}</b><span><strong>${C.pdca[k].nome}</strong>${C.pdca[k].texto}</span></div>`).join("")}</div>`; }
 
-/* ------------------------------ roteamento e layout ------------------------------ */
-const rota = () => location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+/* ------------------------------ layout ------------------------------ */
+const rota = () => location.hash.replace(/^#\/?/, "").replace(/#.*$/, "").split("/").filter(Boolean);
 function ir(h) { if (location.hash === "#" + h) render(); else location.hash = h; }
 function shell(titulo, corpo, { sub = "", volta = null, ativo = "" } = {}) {
-  const c = CFG; const ins = S.user.tipo === "instrutor";
-  const nome = ins ? (S.db.instrutor.nome || "Instrutora") : est(S.user.id)?.nome;
-  const pend = ins ? pendentesAvaliacao().length : 0;
-  const nav = ins
-    ? [["painel", "Painel", ""], ["avaliacoes", "Avaliações", pend ? `<span class="badge">${pend}</span>` : ""], ["encontros", "Conversas semanais", ""], ["questoes", "Banco de questões", ""], ["conteudo", "Conteúdo da trilha", ""], ["config", "Configurações", ""]]
-    : [["trilha", "Minha trilha", ""], ["resultados", "Meus resultados", ""], ["config", "Configurações", ""]];
-  return `<div class="app">
-    <aside class="rail">
-      <a class="marca" href="#/" aria-label="Início">${c.logo ? `<img src="${esc(c.logo)}" alt="Sotreq">` : `<span class="wm">Sotreq <b>GFC</b></span>`}</a>
-      <div class="quem"><span class="peq">${ins ? "Instrutora" : "Estagiária(o)"}</span><strong>${esc(nome)}</strong></div>
-      <nav aria-label="Principal">${nav.map(([h, t, b]) => `<a href="#/${h}" class="${ativo === h ? "ativo" : ""}">${t}${b}</a>`).join("")}
-        <a href="#/sair">Sair</a></nav>
-      <div class="pe"><div class="sync" id="sync"></div>Engenharia de Mineração Norte<br>Gestão de Frotas e Componentes</div>
-    </aside>
-    <main class="main" id="principal">
-      <header class="topo">${volta ? `<a class="volta" href="${volta[0]}">← ${esc(volta[1])}</a><br>` : ""}<h1>${esc(titulo)}</h1>${sub ? `<p>${sub}</p>` : ""}</header>
-      <div class="conteudo">${corpo}</div>
-    </main></div>`;
+  const t = S.user.tipo; const p = t === "instrutor" ? pendencias() : null;
+  const nome = quemSou(S.db);
+  const naoLidas = t === "estagiario" ? S.db.duvidas.filter(d => d.estId === S.user.id && d.resposta && !d.lidaEst).length : 0;
+  const bd = n => n ? `<span class="badge">${n}</span>` : "";
+  const nav = t === "instrutor"
+    ? [["painel", "Painel", ""], ["indicadores", "Indicadores", ""], ["avaliacoes", "Avaliações", bd(p.total)], ["duvidas", "Dúvidas", bd(p.duv.length)], ["encontros", "Conversas semanais", ""], ["questoes", "Banco de questões", ""], ["conteudo", "Conteúdo da trilha", ""], ["gestor", "Visão do gestor", ""], ["config", "Configurações", ""]]
+    : t === "gestor" ? [["gestor", "Visão geral", ""]]
+    : [["trilha", "Minha trilha", ""], ["duvidas", "Dúvidas", bd(naoLidas)], ["resultados", "Meus resultados", ""], ["config", "Configurações", ""]];
+  return `<div class="app"><aside class="rail">
+      <a class="marca" href="#/" aria-label="Início">${CFG.logo ? `<img src="${esc(CFG.logo)}" alt="Sotreq">` : `<span class="wm">Sotreq <b>GFC</b></span>`}</a>
+      <div class="quem"><span class="peq">${{ instrutor: "Instrutora", gestor: "Gestor", estagiario: "Estagiária(o)" }[t]}</span><strong>${esc(nome)}</strong></div>
+      <nav aria-label="Principal">${nav.map(([h, tt, b]) => `<a href="#/${h}" class="${ativo === h ? "ativo" : ""}">${tt}${b}</a>`).join("")}<a href="#/sair">Sair</a></nav>
+      <div class="pe"><div class="sync" id="sync"></div>Engenharia de Mineração Norte<br>Gestão de Frotas e Componentes</div></aside>
+    <main class="main" id="principal"><header class="topo">${volta ? `<a class="volta" href="${volta[0]}">← ${esc(volta[1])}</a><br>` : ""}<h1>${esc(titulo)}</h1>${sub ? `<p>${sub}</p>` : ""}</header>
+      <div class="conteudo">${corpo}</div></main></div>`;
 }
 
 async function render() {
@@ -480,15 +648,21 @@ async function render() {
   if (r[0] === "config" && !S.user) { app.innerHTML = telaConfig(true); ligar(); return; }
   if (r[0] === "sair") { sessionStorage.removeItem(K_SES); S.user = null; location.hash = "#/"; return; }
   if (!S.user) { app.innerHTML = telaLogin(); ligar(); return; }
-  let html;
-  if (S.user.tipo === "instrutor") {
+  let html; const t = S.user.tipo;
+  if (r[0] === "relatorio") html = telaRelatorio(t === "estagiario" ? S.user.id : r[1], t === "estagiario" ? r[1] : r[2]);
+  else if (t === "gestor") html = telaGestor();
+  else if (t === "instrutor") {
     switch (r[0]) {
       case "estagiario": html = telaEstagiario(r[1]); break;
       case "avaliar": html = telaAvaliar(r[1], r[2], r[3]); break;
+      case "entrega": html = telaAvaliarEntrega(r[1], r[2], r[3]); break;
       case "avaliacoes": html = telaAvaliacoes(); break;
+      case "indicadores": html = telaIndicadores(r[1]); break;
+      case "duvidas": html = telaDuvidasInstrutor(); break;
       case "encontros": html = telaEncontros(); break;
       case "questoes": html = telaQuestoes(); break;
       case "conteudo": html = telaConteudo(); break;
+      case "gestor": html = telaGestor(); break;
       case "modulo": html = telaModulo(r[1], r[2] || null); break;
       case "tentativa": html = telaTentativa(r[1], r[2], r[3]); break;
       case "config": html = telaConfig(false); break;
@@ -501,580 +675,564 @@ async function render() {
       case "teste": html = telaTeste(r[1]); break;
       case "tentativa": html = r.length > 3 ? telaTentativa(eid, r[2], r[3]) : telaTentativa(eid, r[1], r[2]); break;
       case "resultados": html = telaResultados(); break;
+      case "duvidas": html = telaDuvidasEst(); break;
       case "config": html = telaConfig(false); break;
       default: html = telaTrilha();
     }
   }
   app.innerHTML = html; atualizarSync(); ligar(); window.scrollTo?.(0, 0);
+  if (t === "estagiario" && r[0] === "duvidas") { const eid = S.user.id; if (S.db.duvidas.some(d => d.estId === eid && d.resposta && !d.lidaEst)) agendar(db => db.duvidas.forEach(d => { if (d.estId === eid && d.resposta) d.lidaEst = true; }), "leu respostas das dúvidas"); }
 }
 
-/* ------------------------------ telas: acesso ------------------------------ */
+/* ------------------------------ acesso ------------------------------ */
 function telaErro() {
-  return `<div class="login"><div class="lado"><span class="wm" style="font-family:var(--cond);font-weight:700;font-size:26px">Sotreq GFC</span><h1>Trilha GFC</h1><p>Não foi possível abrir a base de dados.</p></div>
-  <div class="form"><h2>Conexão com a base</h2><div class="aviso erro">${esc(S.erroCarga)}</div>
-  <p>Confira o repositório, o caminho do arquivo e o token em Configurações, ou continue salvando só neste navegador.</p>
+  return `<div class="login"><div class="lado"><span style="background:var(--car);color:#fff;font-family:var(--cond);font-weight:700;font-size:24px;padding:6px 12px;align-self:flex-start">Sotreq <span style="color:var(--am)">GFC</span></span><h1>Trilha GFC</h1><p>Não foi possível abrir a base de dados.</p></div>
+  <div class="form"><h2>Conexão com a base</h2><div class="aviso erro">${esc(S.erroCarga)}</div><p>Confira o repositório, a branch e o token em Configurações, ou use só este navegador.</p>
   <div class="acoes"><a class="btn" href="#/config" data-acao="limpar-erro">Abrir configurações</a><button class="btn linha" data-acao="usar-local">Usar só este navegador</button><button class="btn linha" data-acao="recarregar">Tentar de novo</button></div></div></div>`;
 }
 function telaLogin() {
-  const semInstrutor = !S.db.instrutor.pinHash; const ests = S.db.estagiarios.filter(e => e.ativo !== false);
-  const c = Store.cfg();
-  return `<div class="login">
-    <div class="lado"><div>${CFG.logo ? `<img src="${esc(CFG.logo)}" alt="Sotreq" style="max-height:44px">` : `<span style="background:var(--car);color:#fff;font-family:var(--cond);font-weight:700;font-size:24px;padding:6px 12px">Sotreq <span style="color:var(--am)">GFC</span></span>`}
-      <h1>Trilha de aprendizagem GFC</h1>
-      <p>Imersão em Gestão de Frotas e Componentes: aprender cada atualização do sistema e entender o que ela move no processo inteiro.</p></div>
-      <p class="peq" style="margin:0">Engenharia de Mineração Norte · ${C.modulos.length} módulos em ${C.fases.length} fases</p></div>
-    <div class="form">
-      ${semInstrutor ? `
-        <h2>Primeiro acesso</h2><p class="sub">Crie o perfil de instrutora. Depois você cadastra os estagiários e o PIN de cada um.</p>
-        <label for="i-nome">Seu nome</label><input id="i-nome" type="text" autocomplete="name">
-        <label for="i-pin">PIN (4 a 8 dígitos)</label><input id="i-pin" type="password" inputmode="numeric" autocomplete="new-password">
-        <label for="i-pin2">Repita o PIN</label><input id="i-pin2" type="password" inputmode="numeric" autocomplete="new-password">
-        <div class="acoes"><button class="btn" data-acao="criar-instrutor">Criar perfil de instrutora</button></div>`
-      : `<h2>Entrar</h2>
-        <div class="perfis" role="group" aria-label="Perfil">
-          <button class="perfil" data-perfil="instrutor" aria-pressed="false"><strong>Instrutora</strong><span>Avaliar testes e dar feedback</span></button>
-          <button class="perfil" data-perfil="estagiario" aria-pressed="false"><strong>Estagiária(o)</strong><span>Estudar e fazer os testes</span></button></div>
-        <div id="login-est" hidden><label for="l-est">Seu nome</label>
-          ${ests.length ? `<select id="l-est">${ests.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join("")}</select>` : `<div class="aviso info">Nenhum estagiário cadastrado ainda. A instrutora cadastra no Painel.</div>`}</div>
-        <div id="login-pin" hidden><label for="l-pin">PIN</label><input id="l-pin" type="password" inputmode="numeric" autocomplete="current-password">
-        <div class="acoes"><button class="btn" data-acao="entrar">Entrar</button></div></div>`}
-      <p class="peq sub" style="margin-top:28px">${c.modo === "github" && !c.incompleto ? `Base conectada ao GitHub: <b>${esc(c.owner)}/${esc(c.repo)}</b>.` : `A base está salva só neste navegador.`} <a href="#/config">Configurar armazenamento</a></p>
-    </div></div>`;
+  const semI = !S.db.instrutor.pinHash; const ests = ativos(); const gh = Store.gh(); const c = Store.cfg();
+  return `<div class="login"><div class="lado"><div>${CFG.logo ? `<img src="${esc(CFG.logo)}" alt="Sotreq" style="max-height:44px">` : `<span style="background:var(--car);color:#fff;font-family:var(--cond);font-weight:700;font-size:24px;padding:6px 12px">Sotreq <span style="color:var(--am)">GFC</span></span>`}
+      <h1>Trilha de aprendizagem GFC</h1><p>Imersão em Gestão de Frotas e Componentes: aprender cada atualização do sistema e entender o que ela move no processo inteiro.</p></div>
+      <p class="peq" style="margin:0">Engenharia de Mineração Norte · ${MODS.length} módulos em ${C.fases.length} fases</p></div>
+    <div class="form">${semI ? `${!gh ? `<div class="aviso">A base ainda não está conectada ao GitHub. Se você vai usar a trilha com outras pessoas, <a href="#/config">configure o armazenamento</a> antes de criar o perfil.</div>` : ""}
+      <h2>Primeiro acesso</h2><p class="sub">Crie o perfil de instrutora. Depois você cadastra os estagiários e o gestor.</p>
+      <label for="i-nome">Seu nome</label><input id="i-nome" type="text" autocomplete="name">
+      <label for="i-pin">PIN (4 a 8 dígitos)</label><input id="i-pin" type="password" inputmode="numeric" autocomplete="new-password">
+      <label for="i-pin2">Repita o PIN</label><input id="i-pin2" type="password" inputmode="numeric" autocomplete="new-password">
+      <div class="acoes"><button class="btn" data-acao="criar-instrutor">Criar perfil de instrutora</button></div>`
+    : `<h2>Entrar</h2><div class="perfis" role="group" aria-label="Perfil" style="grid-template-columns:repeat(3,1fr)">
+        <button class="perfil" data-perfil="instrutor" aria-pressed="false"><strong>Instrutora</strong><span>Avaliar e acompanhar</span></button>
+        <button class="perfil" data-perfil="estagiario" aria-pressed="false"><strong>Estagiário</strong><span>Estudar e entregar</span></button>
+        <button class="perfil" data-perfil="gestor" aria-pressed="false"><strong>Gestor</strong><span>Ver o progresso</span></button></div>
+      <div id="login-est" hidden><label for="l-est">Seu nome</label>${ests.length ? `<select id="l-est">${ests.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join("")}</select>` : `<div class="aviso info">Nenhum estagiário cadastrado ainda.</div>`}</div>
+      <div id="login-pin" hidden><label for="l-pin">PIN</label><input id="l-pin" type="password" inputmode="numeric" autocomplete="current-password"><div class="acoes"><button class="btn" data-acao="entrar">Entrar</button></div></div>`}
+      <p class="peq sub" style="margin-top:28px">${gh ? `Base conectada ao GitHub: <b>${esc(c.owner)}/${esc(c.repo)}</b>.` : `A base está salva só neste navegador.`} <a href="#/config">Configurar armazenamento</a></p></div></div>`;
 }
 
-/* ------------------------------ telas: instrutora ------------------------------ */
+/* ------------------------------ instrutora: painel ------------------------------ */
+function faixaModulos(eid) { return `<div class="faixa-mod">${MODS.map(m => { const st = situacao(eid, m.id).st; return `<span title="${m.id} · ${esc(m.titulo)} — ${ROT[st]}" style="background:${COR[st]};color:${st === "aprovado" ? "#FDB913" : "#232323"};${st === "dispensado" ? "box-shadow:inset 0 0 0 1px #ccc" : ""}">${m.id.slice(1)}</span>`; }).join("")}</div>`; }
 function telaPainel() {
-  const pend = pendentesAvaliacao(); const ests = S.db.estagiarios.filter(e => e.ativo !== false);
-  const cards = ests.map(e => {
-    const ind = indicadores(e.id); const m = moduloAtual(e.id); const s = m ? situacao(e.id, m.id) : null;
-    const pct = ind.total ? Math.round(ind.aprov / ind.total * 100) : 0;
-    return `<div class="painel"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
-      <h3 style="margin:0">${esc(e.nome)}</h3><span class="peq sub">Início ${fmt(e.inicio)} · término planejado ${fmt(ind.fimPlanejado)}</span></div>
-      <div style="margin:12px 0 6px" class="barra" aria-label="${pct}% concluído"><i style="width:${pct}%"></i></div>
-      <div class="peq sub">${ind.aprov} de ${ind.total} módulos aprovados (${pct}%)</div>
-      <div class="grade g3" style="margin-top:14px">
-        <div><div class="peq sub">Agora</div>${m ? `<b>${m.id} · ${esc(m.titulo)}</b><br>${chip(s.st)}${s.p?.prazo && (s.st === "estudo" || s.st === "reciclagem") ? ` <span class="peq">teste em ${fmt(s.p.prazo)}</span>` : ""}` : `<b>Trilha concluída</b>`}</div>
-        <div><div class="peq sub">Média 1ª tentativa</div><b>${ind.media != null ? nota1(ind.media) : "—"}</b></div>
-        <div><div class="peq sub">Previsão de término</div><b>${ind.previsao ? fmt(ind.previsao) : "Concluída"}</b></div></div>
-      ${ind.gatilhos.length ? `<div class="aviso" style="margin-bottom:0">${ind.gatilhos.map(g => esc(g.txt)).join("<br>")}</div>` : ""}
-      <div class="acoes"><a class="btn escuro mini" href="#/estagiario/${e.id}">Abrir acompanhamento</a></div></div>`;
-  }).join("");
+  const pend = pendencias(); const ests = ativos();
+  const cards = ests.map(e => { const ind = indicadores(e.id); const m = moduloAtual(e.id); const s = m ? situacao(e.id, m.id) : null; const pc = ind.total ? Math.round(ind.aprov / ind.total * 100) : 0;
+    return `<div class="painel"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h3 style="margin:0">${esc(e.nome)}</h3>${semaforo(ind)}</div>
+      ${faixaModulos(e.id)}<div class="barra"><i style="width:${pc}%"></i></div><div class="peq sub" style="margin-top:4px">${ind.aprov} de ${ind.total} módulos concluídos (${pc}%) · início ${fmt(e.inicio)} · término planejado ${fmt(ind.fimPlanejado)} · previsão ${ind.previsao ? fmt(ind.previsao) : "concluída"}</div>
+      <div class="grade g3" style="margin-top:14px"><div><div class="peq sub">Agora</div>${m ? `<b>${m.id} · ${esc(m.titulo)}</b><br>${chip(s.st)}` : `<b>Trilha concluída</b>`}</div>
+        <div><div class="peq sub">Média 1ª tentativa / nota final</div><b>${nota1(ind.media1)} / ${nota1(ind.mediaFinal)}</b></div>
+        <div><div class="peq sub">Reciclagens (teste / IT)</div><b>${ind.reprov} / ${ind.reprovIT}</b></div></div>
+      ${ind.gatilhos.length ? `<div class="aviso" style="margin-bottom:0">${ind.gatilhos.map(esc).join("<br>")}</div>` : ""}
+      <div class="acoes"><a class="btn escuro mini" href="#/estagiario/${e.id}">Acompanhamento</a><a class="btn linha mini" href="#/indicadores/${e.id}">Indicadores e perfil</a></div></div>`; }).join("");
   return shell("Painel da instrutora", `
-    ${pend.length ? `<div class="aviso info"><b>${pend.length} teste(s) aguardando sua avaliação.</b> <a href="#/avaliacoes">Avaliar agora</a></div>` : ""}
-    <h2>Estagiários</h2>
-    ${cards || `<div class="vazio">Nenhum estagiário cadastrado. Cadastre o primeiro abaixo para liberar a trilha.</div>`}
-    <details class="acc" ${ests.length ? "" : "open"}><summary>Cadastrar estagiário</summary><div class="corpo">
-      <div class="linha-form">
-        <div><label for="n-nome">Nome</label><input id="n-nome" type="text"></div>
-        <div><label for="n-email">E-mail (opcional)</label><input id="n-email" type="email"></div>
-        <div><label for="n-inicio">Início da imersão</label><input id="n-inicio" type="date" value="${hoje()}"></div>
-        <div><label for="n-pin">PIN inicial</label><input id="n-pin" type="text" inputmode="numeric"></div></div>
-      <p class="ajuda">Passe o PIN pessoalmente. O estagiário usa o nome e o PIN para entrar.</p>
-      <div class="acoes"><button class="btn" data-acao="criar-estagiario">Cadastrar</button></div></div></details>
-    <h2>Atividade recente</h2>
-    ${S.db.log.length ? `<div class="tabela-wrap"><table><thead><tr><th>Quando</th><th>Quem</th><th>O quê</th></tr></thead><tbody>
-      ${S.db.log.slice(0, 12).map(l => `<tr><td>${fmtHora(l.em)}</td><td>${esc(l.quem)}</td><td>${esc(l.acao)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">As ações de estudo, testes e avaliações aparecem aqui.</div>`}`,
-    { ativo: "painel", sub: "Plano → execução → checagem → ação: acompanhe cada estagiário por módulo e decida o próximo passo." });
+    <div class="grade g3"><div class="num"><div class="v">${pend.testes.length}</div><div class="l">Testes para corrigir</div></div><div class="num"><div class="v">${pend.entregas.length}</div><div class="l">ITs aguardando apresentação</div></div><div class="num"><div class="v">${pend.duv.length}</div><div class="l">Dúvidas sem resposta</div></div></div>
+    ${pend.total ? `<div class="acoes"><a class="btn" href="#/avaliacoes">Ir para avaliações</a>${pend.duv.length ? `<a class="btn linha" href="#/duvidas">Responder dúvidas</a>` : ""}</div>` : ""}
+    <h2>Estagiários</h2>${cards || `<div class="vazio">Nenhum estagiário cadastrado. Cadastre o primeiro abaixo.</div>`}
+    <details class="acc" ${ests.length ? "" : "open"}><summary>Cadastrar estagiário</summary><div class="corpo"><div class="linha-form">
+      <div><label for="n-nome">Nome</label><input id="n-nome" type="text"></div><div><label for="n-email">E-mail (opcional)</label><input id="n-email" type="email"></div>
+      <div><label for="n-inicio">Início da imersão</label><input id="n-inicio" type="date" value="${hoje()}"></div><div><label for="n-pin">PIN inicial</label><input id="n-pin" type="text" inputmode="numeric"></div></div>
+      <p class="ajuda">Passe o PIN pessoalmente.</p><div class="acoes"><button class="btn" data-acao="criar-estagiario">Cadastrar</button></div></div></details>
+    <h2>Atividade recente</h2>${S.db.log.length ? `<div class="tabela-wrap"><table><thead><tr><th>Quando</th><th>Quem</th><th>O quê</th></tr></thead><tbody>${S.db.log.slice(0, 12).map(l => `<tr><td>${fmtHora(l.em)}</td><td>${esc(l.quem)}</td><td>${esc(l.acao)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">As ações aparecem aqui.</div>`}`,
+    { ativo: "painel", sub: `Capacidade de estudo configurada: ${fmtH(horasSemana())} por semana (${[1, 2, 3, 4, 5].map(d => `${DIAS[d]} ${String(cap()[d]).replace(".", ",")}h`).join(" · ")}).` });
 }
 
 function telaEstagiario(eid) {
-  const e = est(eid); if (!e) return shell("Estagiário não encontrado", `<a class="btn" href="#/painel">Voltar ao painel</a>`, { ativo: "painel" });
-  const ind = indicadores(eid);
-  const linhas = C.fases.map(f => `<tr class="fase-sep"><td colspan="8">Fase ${f.n} · ${esc(f.nome)} <span class="peq" style="text-transform:none;font-family:Barlow">(${f.semanas})</span></td></tr>` +
-    MODS.filter(m => m.fase === f.n).map(m => {
-      const s = situacao(eid, m.id); const p = s.p; const tent = p?.tentativas || [];
-      const notas = tent.filter(t => t.status === "avaliada").map(t => `<a href="#/tentativa/${eid}/${m.id}/${t.id}" style="color:${t.aprovado ? "var(--ok)" : "var(--ver)"};font-weight:600">${nota1(t.nota)}</a>`).join(" · ");
-      const pendT = tent.find(t => t.status === "pendente");
-      return `<tr><td><b>${m.id}</b></td><td><a href="#/modulo/${m.id}/${eid}">${esc(m.titulo)}</a><div class="peq sub">${esc(m.processo)}</div></td>
-        <td>${chip(s.st)}${pendT ? `<br><a class="btn mini" style="margin-top:6px" href="#/avaliar/${eid}/${m.id}/${pendT.id}">Avaliar</a>` : ""}</td>
-        <td>${fmt(p?.inicio)}</td><td>${p?.prazo ? fmt(p.prazo) : `${s.aj.dias} d.u.`}</td>
-        <td>${notas || "—"}<div class="peq sub">mín. ${nota1(s.aj.notaMin)}</div></td>
-        <td>${esc(p?.dominioValidado || p?.dominio || "—")}${p?.dominioValidado ? `<div class="peq sub">validado</div>` : p?.dominio ? `<div class="peq sub">autoavaliação</div>` : ""}</td>
-        <td><button class="btn linha mini" data-acao="abrir-ajuste" data-mod="${m.id}">Ajustar</button></td></tr>
-        <tr id="aj-${m.id}" hidden><td colspan="8" style="background:var(--nev)">${formAjuste(eid, m, s)}</td></tr>`;
-    }).join("")).join("");
-  const encs = S.db.encontros.filter(x => x.estId === eid).slice(0, 4);
+  const e = est(eid); if (!e) return shell("Estagiário não encontrado", `<a class="btn" href="#/painel">Voltar</a>`, { ativo: "painel" });
+  const ind = indicadores(eid); const pl = Object.fromEntries(planejamento(eid).map(x => [x.m.id, x]));
+  const linhas = C.fases.map(f => `<tr class="fase-sep"><td colspan="8">Fase ${f.n} · ${esc(f.nome)}</td></tr>` + MODS.filter(m => m.fase === f.n).map(m => {
+    const s = situacao(eid, m.id); const p = s.p; const tent = p?.tentativas || []; const pt = tent.find(t => t.status === "pendente"); const px = p?.entregas?.find(x => x.status === "pendente");
+    const nt = tent.filter(t => t.status === "avaliada").map(t => `<a href="#/tentativa/${eid}/${m.id}/${t.id}" style="color:${t.aprovado ? "var(--ok)" : "var(--ver)"};font-weight:600">${nota1(t.nota)}</a>`).join(" · ");
+    const ni = (p?.entregas || []).filter(x => x.status === "avaliada").map(x => `<span style="color:${x.aprovado ? "var(--ok)" : "var(--ver)"};font-weight:600">${nota1(x.nota)}</span>`).join(" · ");
+    return `<tr><td><b>${m.id}</b></td><td><a href="#/modulo/${m.id}/${eid}">${esc(m.titulo)}</a><div class="peq sub">${fmtH(s.aj.horasEstudo)} estudo + ${fmtH(s.aj.horasIT)} IT</div></td>
+      <td>${chip(s.st)}${pt ? `<br><a class="btn mini" style="margin-top:6px" href="#/avaliar/${eid}/${m.id}/${pt.id}">Corrigir teste</a>` : ""}${px ? `<br><a class="btn mini" style="margin-top:6px" href="#/entrega/${eid}/${m.id}/${px.id}">Avaliar IT</a>` : ""}</td>
+      <td>${fmt(p?.inicio)}<div class="peq sub">plan. ${fmt(pl[m.id]?.ini)}</div></td><td>${p?.prazo ? fmt(p.prazo) : fmt(pl[m.id]?.fimEstudo)}${p?.prazoEntrega ? `<div class="peq sub">IT ${fmt(p.prazoEntrega)}</div>` : ""}</td>
+      <td>${nt || "—"}${ni ? `<div class="peq">IT: ${ni}</div>` : ""}</td><td><b>${nota1(notaFinal(p))}</b>${p?.entregas?.length ? `<div><a class="peq" href="#/relatorio/${eid}/${m.id}">relatório</a></div>` : ""}</td>
+      <td><button class="btn linha mini" data-acao="abrir-ajuste" data-mod="${m.id}">Ajustar</button></td></tr><tr id="aj-${m.id}" hidden><td colspan="8" style="background:var(--nev)">${formAjuste(eid, m, s)}</td></tr>`; }).join("")).join("");
+  const encs = S.db.encontros.filter(x => x.estId === eid).slice(0, 3);
   return shell(e.nome, `
-    <div class="grade g4">
-      <div class="num"><div class="v">${ind.aprov}/${ind.total}</div><div class="l">Módulos conforme o esperado</div></div>
-      <div class="num"><div class="v">${ind.media != null ? nota1(ind.media) : "—"}</div><div class="l">Média na 1ª tentativa</div></div>
-      <div class="num"><div class="v">${ind.assert != null ? Math.round(ind.assert) + "%" : "—"}</div><div class="l">Assertividade do tempo (planejado ÷ real)</div></div>
-      <div class="num"><div class="v">${ind.reprov}</div><div class="l">Reciclagens (correções)</div></div></div>
-    <div class="painel cinza" style="margin-top:20px"><b>Recálculo do plano.</b> Término planejado em ${fmt(ind.fimPlanejado)}; no ritmo atual, ${ind.previsao ? `previsão de término em <b>${fmt(ind.previsao)}</b>` : "<b>trilha concluída</b>"}.
-      ${ind.gatilhos.length ? `<div class="aviso" style="margin-bottom:0">${ind.gatilhos.map(g => esc(g.txt)).join("<br>")}</div>` : ""}</div>
-    <h2>Módulos</h2>
-    <div class="tabela-wrap"><table><thead><tr><th>Nº</th><th>Módulo</th><th>Situação</th><th>Início</th><th>Teste libera</th><th>Notas</th><th>Domínio</th><th></th></tr></thead><tbody>${linhas}</tbody></table></div>
-    <h2>Matriz processo × domínio</h2>
-    <div class="tabela-wrap"><table><thead><tr><th>Módulo</th>${C.niveis.map(n => `<th>${n}</th>`).join("")}</tr></thead><tbody>
-      ${MODS.map(m => { const p = prog(eid, m.id); const d = p?.dominioValidado || p?.dominio; const i = C.niveis.indexOf(d);
-        return `<tr><td>${m.id} · ${esc(m.titulo)}</td>${C.niveis.map((n, k) => `<td style="text-align:center">${i >= k ? `<span aria-label="sim" style="display:inline-block;width:16px;height:16px;background:${p?.dominioValidado ? "var(--gra)" : "var(--am)"}"></span>` : ""}</td>`).join("")}</tr>`; }).join("")}</tbody></table></div>
-    <p class="ajuda">Quadrado escuro: nível validado pela instrutora. Amarelo: autoavaliação do estagiário.</p>
-    <h2>Últimas conversas semanais</h2>
-    ${encs.length ? encs.map(x => `<div class="painel"><b>${fmt(x.data)}</b>${x.gatilho && x.gatilho !== "Nenhum" ? ` · <span class="st st-reciclagem">${esc(x.gatilho)}</span>` : ""}<p style="margin-top:6px;white-space:pre-wrap">${esc(x.revisao)}</p>${x.prioridades ? `<p class="peq"><b>Próxima semana:</b> ${esc(x.prioridades)}</p>` : ""}</div>`).join("") : `<div class="vazio">Nenhuma conversa registrada. <a href="#/encontros">Registrar conversa</a></div>`}
-    <h2>Cadastro</h2>
-    <div class="painel"><div class="linha-form">
-      <div><label for="e-nome">Nome</label><input id="e-nome" type="text" value="${esc(e.nome)}"></div>
-      <div><label for="e-inicio">Início da imersão</label><input id="e-inicio" type="date" value="${esc(e.inicio)}"></div>
-      <div><label for="e-pin">Novo PIN (deixe vazio para manter)</label><input id="e-pin" type="text" inputmode="numeric"></div></div>
-      <div class="acoes"><button class="btn escuro" data-acao="salvar-estagiario" data-est="${eid}">Salvar cadastro</button>
-      <button class="btn perigo" data-acao="arquivar-estagiario" data-est="${eid}">Arquivar estagiário</button></div></div>`,
-    { volta: ["#/painel", "Painel"], ativo: "painel", sub: `Início em ${fmt(e.inicio)}. Ajuste prazos, notas mínimas e escopo por módulo: o ajuste é por processo, não do plano inteiro.` });
+    <div class="grade g4"><div class="num"><div class="v">${ind.aprov}/${ind.total}</div><div class="l">Módulos concluídos</div></div><div class="num"><div class="v">${nota1(ind.mediaFinal)}</div><div class="l">Nota final média</div></div>
+      <div class="num"><div class="v">${pct(ind.assert)}</div><div class="l">Assertividade do tempo</div></div><div class="num"><div class="v">${ind.reprov + ind.reprovIT}</div><div class="l">Reciclagens</div></div></div>
+    <div class="painel cinza" style="margin-top:20px"><b>Recálculo do plano.</b> Término planejado em ${fmt(ind.fimPlanejado)}; ${ind.previsao ? `previsão atual <b>${fmt(ind.previsao)}</b>` : "<b>trilha concluída</b>"}. ${semaforo(ind)}
+      ${ind.gatilhos.length ? `<div class="aviso" style="margin-bottom:0">${ind.gatilhos.map(esc).join("<br>")}</div>` : ""}<div class="acoes"><a class="btn linha mini" href="#/indicadores/${eid}">Ver indicadores e perfil</a></div></div>
+    <h2>Módulos</h2><div class="tabela-wrap"><table><thead><tr><th>Nº</th><th>Módulo</th><th>Situação</th><th>Início</th><th>Teste / IT</th><th>Notas</th><th>Final</th><th></th></tr></thead><tbody>${linhas}</tbody></table></div>
+    <h2>Últimas conversas semanais</h2>${encs.length ? encs.map(x => `<div class="painel"><b>${fmt(x.data)}</b>${x.gatilho && x.gatilho !== "Nenhum" ? ` · <span class="st st-reciclagem">${esc(x.gatilho)}</span>` : ""}<p style="margin-top:6px;white-space:pre-wrap">${esc(x.revisao)}</p></div>`).join("") : `<div class="vazio">Nenhuma conversa registrada. <a href="#/encontros">Registrar</a></div>`}
+    <h2>Cadastro</h2><div class="painel"><div class="linha-form"><div><label for="e-nome">Nome</label><input id="e-nome" type="text" value="${esc(e.nome)}"></div><div><label for="e-inicio">Início da imersão</label><input id="e-inicio" type="date" value="${esc(e.inicio)}"></div><div><label for="e-pin">Novo PIN (vazio mantém)</label><input id="e-pin" type="text" inputmode="numeric"></div></div>
+      <div class="acoes"><button class="btn escuro" data-acao="salvar-estagiario" data-est="${eid}">Salvar cadastro</button><button class="btn perigo" data-acao="arquivar-estagiario" data-est="${eid}">Arquivar estagiário</button></div></div>`,
+    { volta: ["#/painel", "Painel"], ativo: "painel", sub: "Ajuste horas, nota mínima e escopo por módulo. O ajuste é por processo, não do plano inteiro." });
 }
 function formAjuste(eid, m, s) {
-  const p = s.p; const aberto = p && (p.status === "estudo" || p.status === "reciclagem");
-  return `<div class="linha-form">
-    <div><label for="aj-d-${m.id}">Prazo de estudo (dias úteis)</label><input id="aj-d-${m.id}" type="number" min="1" max="60" value="${s.aj.dias}"></div>
+  const p = s.p; const est0 = p && ["estudo", "reciclagem"].includes(p.status); const it = p && ["entrega", "ajuste_it"].includes(p.status);
+  return `<div class="linha-form"><div><label for="aj-h-${m.id}">Horas de estudo</label><input id="aj-h-${m.id}" type="number" min="1" max="80" step="0.5" value="${s.aj.horasEstudo}"></div>
+    <div><label for="aj-i-${m.id}">Horas para IT e apresentação</label><input id="aj-i-${m.id}" type="number" min="1" max="40" step="0.5" value="${s.aj.horasIT}"></div>
     <div><label for="aj-n-${m.id}">Nota mínima (0–10)</label><input id="aj-n-${m.id}" type="number" min="0" max="10" step="0.5" value="${s.aj.notaMin}"></div>
-    <div><label for="aj-e-${m.id}">Escopo</label><select id="aj-e-${m.id}"><option value="1" ${s.aj.escopo ? "selected" : ""}>Faz parte do escopo</option><option value="0" ${s.aj.escopo ? "" : "selected"}>Fora do escopo (dispensar)</option></select></div>
-    ${aberto ? `<div><label for="aj-p-${m.id}">Data de liberação do teste</label><input id="aj-p-${m.id}" type="date" value="${p.prazo}"></div>` : ""}</div>
+    <div><label for="aj-e-${m.id}">Escopo</label><select id="aj-e-${m.id}"><option value="1" ${s.aj.escopo ? "selected" : ""}>Faz parte</option><option value="0" ${s.aj.escopo ? "" : "selected"}>Fora do escopo</option></select></div>
+    ${est0 ? `<div><label for="aj-p-${m.id}">Liberação do teste</label><input id="aj-p-${m.id}" type="date" value="${p.prazo}"></div>` : ""}${it ? `<div><label for="aj-x-${m.id}">Prazo da IT</label><input id="aj-x-${m.id}" type="date" value="${p.prazoEntrega || ""}"></div>` : ""}</div>
     <div class="acoes"><button class="btn escuro mini" data-acao="salvar-ajuste" data-est="${eid}" data-mod="${m.id}">Salvar ajuste</button>
-    ${aberto && !p.liberado && hoje() < p.prazo ? `<button class="btn mini" data-acao="liberar-teste" data-est="${eid}" data-mod="${m.id}">Liberar teste agora</button>` : ""}
-    ${p && p.status !== "estudo" && p.status !== "reciclagem" && p.status !== "avaliacao" ? `<button class="btn linha mini" data-acao="reabrir" data-est="${eid}" data-mod="${m.id}">Reabrir módulo para reciclagem</button>` : ""}</div>`;
+    ${est0 && !p.liberado && hoje() < p.prazo ? `<button class="btn mini" data-acao="liberar-teste" data-est="${eid}" data-mod="${m.id}">Liberar teste agora</button>` : ""}
+    ${p && p.status === "aprovado" ? `<button class="btn linha mini" data-acao="reabrir" data-est="${eid}" data-mod="${m.id}">Reabrir para reciclagem</button>` : ""}</div>`;
 }
 
+/* ------------------------------ instrutora: indicadores ------------------------------ */
+function telaIndicadores(eid) {
+  const ests = ativos(); if (!ests.length) return shell("Indicadores", `<div class="vazio">Cadastre um estagiário para ver os indicadores.</div>`, { ativo: "indicadores" });
+  eid = eid && est(eid) ? eid : ests[0].id; const e = est(eid); const ind = indicadores(eid);
+  const feitos = MODS.filter(m => (prog(eid, m.id)?.tentativas || []).some(t => t.status === "avaliada"));
+  const n1 = feitos.map(m => prog(eid, m.id).tentativas.find(t => t.status === "avaliada").nota);
+  const nIT = feitos.map(m => prog(eid, m.id).notaIT ?? null); const nF = feitos.map(m => prog(eid, m.id).status === "aprovado" ? notaFinal(prog(eid, m.id)) : null);
+  const rg = regressao(n1); const tend = rg ? n1.map((_, i) => rg.a + rg.b * i) : [];
+  const leituraCurva = !rg ? "Ainda não há módulos suficientes para traçar a tendência (mínimo de 2)." : rg.b > 0.15 ? `Curva <b>ascendente</b> (+${nota1(rg.b)} ponto por módulo): o aprendizado está acelerando à medida que os processos se conectam.` : rg.b < -0.15 ? `Curva <b>descendente</b> (${nota1(rg.b)} por módulo): a complexidade crescente está pesando. Vale revisar as bases e o ritmo.` : `Curva <b>estável</b>: desempenho consistente entre módulos.`;
+  const concl = MODS.filter(m => prog(eid, m.id)?.status === "aprovado" && prog(eid, m.id).inicio);
+  const plD = concl.map(m => { const a = ajuste(eid, m.id); const p = prog(eid, m.id); return uteisEntre(p.inicio, addHoras(p.inicio, a.horasEstudo + a.horasIT)); });
+  const reD = concl.map(m => { const p = prog(eid, m.id); return Math.max(1, uteisEntre(p.inicio, p.aprovadoEm)); });
+  const pf = perfil(eid); const L = pf.domE ? LEITURA[pf.domE] : null;
+  const comp = ests.length > 1 ? `<h2>Comparativo entre estagiários</h2><div class="tabela-wrap"><table><thead><tr><th>Estagiário</th><th>Concluídos</th><th>Média 1ª tent.</th><th>Nota final</th><th>Assertividade</th><th>Reciclagens</th><th>Situação</th></tr></thead><tbody>${ests.map(x => { const i = indicadores(x.id); return `<tr><td><a href="#/indicadores/${x.id}">${esc(x.nome)}</a></td><td>${i.aprov}/${i.total}</td><td>${nota1(i.media1)}</td><td>${nota1(i.mediaFinal)}</td><td>${pct(i.assert)}</td><td>${i.reprov + i.reprovIT}</td><td>${semaforo(i)}</td></tr>`; }).join("")}</tbody></table></div>` : "";
+  return shell("Indicadores", `
+    ${ests.length > 1 ? `<label for="ind-est">Estagiário</label><select id="ind-est" data-acao-change="trocar-ind" style="max-width:360px">${ests.map(x => `<option value="${x.id}" ${x.id === eid ? "selected" : ""}>${esc(x.nome)}</option>`).join("")}</select>` : `<p class="sub">${esc(e.nome)}</p>`}
+    <div class="grade g4" style="margin-top:18px"><div class="num"><div class="v">${ind.aprov}/${ind.total}</div><div class="l">Módulos concluídos</div></div><div class="num"><div class="v">${nota1(ind.media1)}</div><div class="l">Média na 1ª tentativa</div></div>
+      <div class="num"><div class="v">${pct(ind.assert)}</div><div class="l">Assertividade do tempo</div></div><div class="num"><div class="v">${S.db.duvidas.filter(d => d.estId === eid).length}</div><div class="l">Dúvidas registradas</div></div></div>
+    <h2>Curva de aprendizagem</h2>
+    <div class="grafico">${feitos.length ? grafLinhas({ labels: feitos.map(m => m.id), series: [{ nome: "Teste · 1ª tentativa", v: n1 }, { nome: "IT e apresentação", v: nIT, cor: "#E3A400" }, { nome: "Nota final", v: nF, cor: "#1F5FA8" }, { nome: "Tendência (1ª tentativa)", v: tend, cor: "#9a9a9a", dash: "4 4", semPontos: true, w: 1.5 }] }) : `<div class="vazio">A curva aparece depois do primeiro teste corrigido.</div>`}<p class="peq" style="margin-top:8px">${leituraCurva}</p></div>
+    <h2>Evolução no tempo</h2><div class="grafico"><h3>Curva S — módulos concluídos por semana</h3>${curvaS(eid)}</div>
+    <div class="grafico"><h3>Tempo por módulo (dias úteis)</h3>${concl.length ? grafBarras({ labels: concl.map(m => m.id), series: [{ nome: "Planejado", v: plD, cor: "#B8B8B2" }, { nome: "Real", v: reD, cor: "#232323" }] }) : `<div class="vazio">Aparece com o primeiro módulo concluído.</div>`}</div>
+    <div class="sigilo"><span class="tag">Perfil do estagiário · visível só para você</span>
+      ${pf.mods === 0 ? `<p>O perfil começa a ser montado depois do primeiro teste corrigido e da primeira entrega de IT.</p>` : `
+      <p class="peq sub">Confiabilidade da leitura: <b>${pf.conf}</b> (${pf.mods} módulo(s) com teste corrigido, ${Math.round(pf.nEnt)} sinais de estilo). Método: desempenho por eixo de competência e por nível cognitivo (taxonomia de Bloom) nas questões, estilo de aprendizagem de Honey &amp; Mumford a partir das reflexões dos relatórios de módulo e sinais de comportamento na plataforma.</p>
+      ${L ? `<div class="arquetipo">${ESTILOS[pf.domE]}${pf.segE ? ` / ${ESTILOS[pf.segE]}` : ""}: ${L.t}</div><p>${L.d}</p>` : `<p><b>Estilo de aprendizagem:</b> aguardando o primeiro relatório de módulo.</p>`}
+      <div class="grade g2"><div><h3>Domínio por eixo de competência</h3>${grafRadar(["Procedimental", "Conceitual", "Relacional", "Analítico"], ["P", "C", "R", "A"].map(k => pf.E[k]))}
+          ${pf.forte ? `<p class="peq">Ponto forte: <b>${EIXOS[pf.forte]}</b>. A desenvolver: <b>${EIXOS[pf.fraco]}</b>.</p>` : ""}</div>
+        <div><h3>Profundidade cognitiva</h3>${Object.entries(BLOOM).map(([k, n]) => medidor(n, pf.B[k])).join("")}
+          <p class="peq">${pf.B.mem != null && pf.B.ana != null ? (pf.B.mem - pf.B.ana > 20 ? "Memoriza bem, mas cai quando precisa analisar ou julgar: estimule perguntas de 'e se…' e casos fora do manual." : pf.B.ana - pf.B.mem > 10 ? "Raciocina bem sobre o processo, mas esquece detalhes de regra e tela: reforce checklists e a IT." : "Desempenho equilibrado entre lembrar, aplicar e analisar.") : ""}</p>
+          <h3>Estilo de aprendizagem (Honey &amp; Mumford)</h3>${Object.entries(ESTILOS).map(([k, n]) => medidor(n, pf.estPct[k], "var(--am-esc)")).join("")}</div></div>
+      <h3>Sinais de comportamento</h3>
+      <div class="grade g4"><div class="num"><div class="v">${pf.calib == null ? "—" : pf.calib > 1.5 ? "Superestima" : pf.calib < -1.5 ? "Subestima" : "Calibrado"}</div><div class="l">Autoconfiança × nota final${pf.calib != null ? ` (${pf.calib > 0 ? "+" : ""}${nota1(pf.calib)})` : ""}</div></div>
+        <div class="num"><div class="v">${pct(pf.pont == null ? null : pf.pont * 100)}</div><div class="l">Testes enviados no prazo</div></div>
+        <div class="num"><div class="v">${pf.duv == null ? "—" : nota1(pf.duv)}</div><div class="l">Dúvidas por módulo</div></div>
+        <div class="num"><div class="v">${pct(pf.chk == null ? null : pf.chk * 100)}</div><div class="l">Uso do checklist de estudo</div></div></div>
+      ${L ? `<h3>Como conduzir com este perfil</h3><ul class="lista">${L.r.map(x => `<li>${esc(x)}</li>`).join("")}${pf.calib > 1.5 ? `<li>Tende a se achar mais pronto do que a nota mostra: valide a execução antes de reduzir o acompanhamento.</li>` : pf.calib < -1.5 ? `<li>Tende a se subestimar: reconheça os acertos e aumente a autonomia gradualmente.</li>` : ""}${pf.duv != null && pf.duv < 0.5 && pf.mods >= 2 ? `<li>Quase não registra dúvidas: pergunte ativamente na conversa semanal.</li>` : ""}</ul>` : ""}`}</div>
+    ${comp}`, { ativo: "indicadores", sub: "Evolução, curva de aprendizagem e leitura de perfil." });
+}
+
+/* ------------------------------ instrutora: avaliações ------------------------------ */
 function telaAvaliacoes() {
-  const pend = pendentesAvaliacao();
-  const feitas = [];
-  for (const e of S.db.estagiarios) for (const m of MODS) for (const t of (prog(e.id, m.id)?.tentativas || [])) if (t.status === "avaliada") feitas.push({ e, m, t });
-  feitas.sort((a, b) => b.t.avaliadoEm.localeCompare(a.t.avaliadoEm));
+  const pend = pendencias(); const feitos = [];
+  for (const e of S.db.estagiarios) for (const m of MODS) { const p = prog(e.id, m.id); for (const t of (p?.tentativas || [])) if (t.status === "avaliada") feitos.push({ e, m, tipo: "Teste", nota: t.nota, ok: t.aprovado, em: t.avaliadoEm, link: `#/tentativa/${e.id}/${m.id}/${t.id}` }); for (const x of (p?.entregas || [])) if (x.status === "avaliada") feitos.push({ e, m, tipo: "IT", nota: x.nota, ok: x.aprovado, em: x.avaliadoEm, link: `#/relatorio/${e.id}/${m.id}` }); }
+  feitos.sort((a, b) => (b.em || "").localeCompare(a.em || ""));
   return shell("Avaliações", `
-    <h2>Aguardando você</h2>
-    ${pend.length ? `<div class="tabela-wrap"><table><thead><tr><th>Enviado</th><th>Estagiário</th><th>Módulo</th><th>Tentativa</th><th>Parcial automática</th><th></th></tr></thead><tbody>
-      ${pend.map(({ e, m, t }) => `<tr><td>${fmtHora(t.enviadoEm)}</td><td>${esc(e.nome)}</td><td>${m.id} · ${esc(m.titulo)}</td><td>${t.n}ª</td><td>${t.questoes.filter(q => q.tipo === "mc").length ? nota1(calcNota(t)) + " (só objetivas)" : "—"}</td><td><a class="btn mini" href="#/avaliar/${e.id}/${m.id}/${t.id}">Avaliar</a></td></tr>`).join("")}</tbody></table></div>`
-      : `<div class="vazio">Nenhum teste pendente. Quando um estagiário enviar um teste, ele aparece aqui.</div>`}
-    <h2>Já avaliadas</h2>
-    ${feitas.length ? `<div class="tabela-wrap"><table><thead><tr><th>Avaliado</th><th>Estagiário</th><th>Módulo</th><th>Nota</th><th>Resultado</th></tr></thead><tbody>
-      ${feitas.slice(0, 40).map(({ e, m, t }) => `<tr><td>${fmtHora(t.avaliadoEm)}</td><td>${esc(e.nome)}</td><td><a href="#/tentativa/${e.id}/${m.id}/${t.id}">${m.id} · ${esc(m.titulo)}</a> (${t.n}ª)</td><td><b>${nota1(t.nota)}</b></td><td>${t.aprovado ? chip("aprovado") : chip("reciclagem")}</td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">Sem histórico ainda.</div>`}`,
-    { ativo: "avaliacoes", sub: "Questões objetivas já chegam corrigidas. Você pontua as dissertativas e práticas e escreve o feedback." });
+    <h2>Testes para corrigir</h2>${pend.testes.length ? `<div class="tabela-wrap"><table><thead><tr><th>Enviado</th><th>Estagiário</th><th>Módulo</th><th>Tentativa</th><th></th></tr></thead><tbody>${pend.testes.map(({ e, m, t }) => `<tr><td>${fmtHora(t.enviadoEm)}</td><td>${esc(e.nome)}</td><td>${m.id} · ${esc(m.titulo)}</td><td>${t.n}ª</td><td><a class="btn mini" href="#/avaliar/${e.id}/${m.id}/${t.id}">Corrigir</a></td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">Nenhum teste pendente.</div>`}
+    <h2>ITs aguardando apresentação</h2>${pend.entregas.length ? `<div class="tabela-wrap"><table><thead><tr><th>Entregue</th><th>Estagiário</th><th>Módulo</th><th>Versão</th><th></th></tr></thead><tbody>${pend.entregas.map(({ e, m, x }) => `<tr><td>${fmtHora(x.enviadoEm)}</td><td>${esc(e.nome)}</td><td>${m.id} · ${esc(m.itTitulo)}</td><td>${x.n}ª</td><td><a class="btn mini" href="#/entrega/${e.id}/${m.id}/${x.id}">Abrir e avaliar</a></td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">Nenhuma IT pendente.</div>`}
+    <h2>Histórico</h2>${feitos.length ? `<div class="tabela-wrap"><table><thead><tr><th>Avaliado</th><th>Estagiário</th><th>Módulo</th><th>Tipo</th><th>Nota</th><th>Resultado</th></tr></thead><tbody>${feitos.slice(0, 50).map(f => `<tr><td>${fmtHora(f.em)}</td><td>${esc(f.e.nome)}</td><td><a href="${f.link}">${f.m.id} · ${esc(f.m.titulo)}</a></td><td>${f.tipo}</td><td><b>${nota1(f.nota)}</b></td><td>${f.ok ? `<span class="st st-aprovado">Aprovado</span>` : `<span class="st st-reciclagem">Refazer</span>`}</td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">Sem histórico ainda.</div>`}`,
+    { ativo: "avaliacoes", sub: "Testes: as objetivas chegam corrigidas. ITs: abra o material, assista à apresentação e pontue pela rubrica." });
 }
-
 function telaAvaliar(eid, mid, tid) {
   const e = est(eid), m = modPorId(mid), p = prog(eid, mid), t = p?.tentativas?.find(x => x.id === tid);
   if (!e || !m || !t) return shell("Tentativa não encontrada", `<a class="btn" href="#/avaliacoes">Voltar</a>`, { ativo: "avaliacoes" });
   if (t.status !== "pendente") return telaTentativa(eid, mid, tid);
   const aj = ajuste(eid, mid);
-  const qs = t.questoes.map((q, i) => {
-    const r = t.respostas[q.id];
-    let bloco = "";
-    if (q.tipo === "mc") {
-      bloco = q.opcoes.map((o, k) => `<div class="opcao ${k === q.correta ? "certa" : k === Number(r) ? "errada" : ""}" style="cursor:default"><span>${k === Number(r) ? "●" : "○"}</span><span>${esc(o)}${k === q.correta ? " <b>(correta)</b>" : ""}</span></div>`).join("") +
-        `<div class="notaq"><span>Nota automática: <b>${t.notas[q.id]?.nota ?? 0} de ${q.peso}</b></span></div>`;
-    } else {
-      bloco = `<div class="resposta">${esc(r?.texto || "(sem resposta)")}</div>${r?.link ? `<p class="peq">Evidência: <a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.link)}</a></p>` : ""}
-        <div class="gabarito"><b>O que se espera</b>${esc(q.esperado || "—")}</div>
-        <div class="notaq"><label for="nq-${q.id}" style="margin:0">Nota (0 a ${q.peso})</label><input id="nq-${q.id}" type="number" min="0" max="${q.peso}" step="0.5" data-nota="${q.id}" data-peso="${q.peso}" required></div>`;
-    }
-    return `<div class="questao"><div class="qh"><span class="qn">Questão ${i + 1}</span><span class="qt">${{ mc: "Objetiva", aberta: "Dissertativa", pratica: "Prática" }[q.tipo]} · peso ${q.peso}</span></div>
-      <div class="enun">${esc(q.enunciado)}</div>${bloco}
-      <label for="cq-${q.id}">Comentário para o estagiário (opcional)</label><textarea id="cq-${q.id}" data-coment="${q.id}" style="min-height:60px"></textarea></div>`;
-  }).join("");
-  return shell(`Avaliar ${m.id}`, `
-    <div class="faixa">${esc(e.nome)} · ${esc(m.titulo)} · ${t.n}ª tentativa enviada em ${fmtHora(t.enviadoEm)}. Nota mínima para avançar: ${nota1(aj.notaMin)}.</div>
-    ${p.dominio ? `<p><b>Autoavaliação de domínio:</b> ${esc(p.dominio)}</p>` : ""}
-    ${p.anotacoes ? `<details class="acc"><summary>Anotações do estagiário no módulo</summary><div class="corpo" style="white-space:pre-wrap">${esc(p.anotacoes)}</div></details>` : ""}
-    ${qs}
-    <div class="resultado" id="res-prev"><div class="nota" id="nota-prev">—</div><div><div class="rot" id="rot-prev">Preencha as notas</div><div class="peq">Calculada sobre o peso total das questões</div></div></div>
-    <div class="painel">
-      <label for="av-dom">Nível de domínio validado</label>
-      <select id="av-dom">${C.niveis.map(n => `<option ${n === p.dominio ? "selected" : ""}>${n}</option>`).join("")}</select>
-      <label for="av-fb">Feedback geral</label><textarea id="av-fb" placeholder="O que foi bem, o que precisa melhorar e como estudar para a próxima etapa."></textarea>
-      <div id="av-recic" hidden><label for="av-dias">Dias úteis de reciclagem antes do novo teste</label><input id="av-dias" type="number" min="1" max="30" value="3" style="max-width:140px">
-        <p class="ajuda">Abaixo da nota mínima, o módulo volta para estudo (Agir no PDCA) e o teste reabre depois desse prazo.</p></div>
-      <div class="acoes"><button class="btn" data-acao="enviar-avaliacao" data-est="${eid}" data-mod="${mid}" data-tent="${tid}" data-min="${aj.notaMin}">Enviar avaliação</button></div></div>`,
-    { volta: ["#/avaliacoes", "Avaliações"], ativo: "avaliacoes" });
+  const qs = t.questoes.map((q, i) => { const r = t.respostas[q.id];
+    const bloco = q.tipo === "mc" ? q.opcoes.map((o, k) => `<div class="opcao ${k === q.correta ? "certa" : k === Number(r) ? "errada" : ""}" style="cursor:default"><span>${k === Number(r) ? "●" : "○"}</span><span>${esc(o)}${k === q.correta ? " <b>(correta)</b>" : ""}</span></div>`).join("") + `<div class="notaq">Nota automática: <b>${t.notas[q.id]?.nota ?? 0} de ${q.peso}</b></div>`
+      : `<div class="resposta">${esc(r?.texto || "(sem resposta)")}</div>${r?.link ? `<p class="peq">Evidência: <a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.link)}</a></p>` : ""}<div class="gabarito"><b>O que se espera</b>${esc(q.esperado || "—")}</div><div class="notaq"><label for="nq-${q.id}" style="margin:0">Nota (0 a ${q.peso})</label><input id="nq-${q.id}" type="number" min="0" max="${q.peso}" step="0.5" data-nota="${q.id}"></div>`;
+    return `<div class="questao"><div class="qh"><span class="qn">Questão ${i + 1}</span><span class="qt">${{ mc: "Objetiva", aberta: "Dissertativa", pratica: "Prática" }[q.tipo]} · peso ${q.peso}</span></div><div class="enun">${esc(q.enunciado)}</div>${bloco}<label for="cq-${q.id}">Comentário (opcional)</label><textarea id="cq-${q.id}" data-coment="${q.id}" style="min-height:56px"></textarea></div>`; }).join("");
+  return shell(`Corrigir teste ${m.id}`, `
+    <div class="faixa">${esc(e.nome)} · ${esc(m.titulo)} · ${t.n}ª tentativa em ${fmtHora(t.enviadoEm)}. Nota mínima: ${nota1(aj.notaMin)}.</div>
+    ${p.anotacoes ? `<details class="acc"><summary>Anotações do estagiário</summary><div class="corpo" style="white-space:pre-wrap">${esc(p.anotacoes)}</div></details>` : ""}${qs}
+    <div class="resultado"><div class="nota" id="nota-prev">—</div><div><div class="rot" id="rot-prev">Preencha as notas</div><div class="peq">Aprovado no teste, o estagiário passa para a etapa da IT.</div></div></div>
+    <div class="painel"><label for="av-dom">Nível de domínio validado</label><select id="av-dom">${C.niveis.map(n => `<option ${n === p.dominio ? "selected" : ""}>${n}</option>`).join("")}</select>
+      <label for="av-fb">Feedback geral</label><textarea id="av-fb" placeholder="O que foi bem, o que precisa melhorar, como estudar para a próxima etapa."></textarea>
+      <div id="av-recic" hidden><label for="av-h">Horas de reciclagem antes do novo teste</label><input id="av-h" type="number" min="1" max="30" step="0.5" value="3" style="max-width:140px"></div>
+      <div class="acoes"><button class="btn" data-acao="enviar-avaliacao" data-est="${eid}" data-mod="${mid}" data-tent="${tid}" data-min="${aj.notaMin}">Enviar correção</button></div></div>`, { volta: ["#/avaliacoes", "Avaliações"], ativo: "avaliacoes" });
+}
+function blocoRelato(rel) {
+  if (!rel) return "";
+  return `<h3>Como foi o processo de aprendizagem</h3><div class="texto-livre">${esc(rel.processo)}</div><h3>Principais dificuldades</h3><div class="texto-livre">${esc(rel.dificuldades)}</div>
+    ${rel.superacao ? `<h3>O que fez para superar</h3><div class="texto-livre">${esc(rel.superacao)}</div>` : ""}
+    <p><b>Horas dedicadas (declaradas):</b> ${rel.horas ? fmtH(rel.horas) : "—"} · <b>Segurança para executar sozinho:</b> ${rel.confianca ? rel.confianca + " de 5" : "—"}</p>`;
+}
+function blocoArquivos(x) {
+  return `<div class="arquivos">${(x.arquivos || []).map(a => `<button class="btn linha mini" style="align-self:flex-start" data-acao="baixar" data-path="${esc(a.path)}" data-nome="${esc(a.nome)}">⬇ ${esc(a.nome)}</button>`).join("")}${x.link ? `<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a>` : ""}${!(x.arquivos || []).length && !x.link ? `<span class="sub">Sem arquivos.</span>` : ""}</div>`;
+}
+function telaAvaliarEntrega(eid, mid, xid) {
+  const e = est(eid), m = modPorId(mid), p = prog(eid, mid), x = p?.entregas?.find(z => z.id === xid);
+  if (!e || !m || !x) return shell("Entrega não encontrada", `<a class="btn" href="#/avaliacoes">Voltar</a>`, { ativo: "avaliacoes" });
+  if (x.status !== "pendente") return telaRelatorio(eid, mid);
+  return shell(`Avaliar IT ${m.id}`, `
+    <div class="faixa">${esc(e.nome)} · ${esc(m.itTitulo)} · ${x.n}ª versão entregue em ${fmtHora(x.enviadoEm)}. Nota mínima da IT: ${nota1(S.db.config.notaMinIT)}.</div>
+    <h2>Material entregue</h2>${blocoArquivos(x)}
+    <h2>Relatório do estagiário</h2>${blocoRelato(x.relatorio)}
+    <h2>Avaliação da apresentação</h2><div class="painel"><label for="ap-data">Data da apresentação</label><input id="ap-data" type="date" value="${hoje()}" style="max-width:200px">
+      <div class="rubrica" style="margin-top:14px">${RUBRICA.map(r => `<div><b>${r.nome}</b> <span class="peq sub">(${Math.round(r.peso * 100)}%)</span><small>${r.desc}</small></div><input type="number" min="0" max="10" step="0.5" data-rub="${r.k}" aria-label="${r.nome}">`).join("")}</div></div>
+    <div class="resultado"><div class="nota" id="nota-prev">—</div><div><div class="rot" id="rot-prev">Preencha a rubrica</div><div class="peq">Nota final do módulo = ${Math.round(S.db.config.pesoTeste * 100)}% teste (${nota1(p.notaTeste)}) + ${Math.round((1 - S.db.config.pesoTeste) * 100)}% IT</div></div></div>
+    <div class="painel"><label for="ap-fb">Feedback da apresentação</label><textarea id="ap-fb"></textarea>
+      <div id="ap-aj" hidden><label for="ap-h">Horas para ajustar a IT</label><input id="ap-h" type="number" min="1" max="20" step="0.5" value="2" style="max-width:140px"></div>
+      <div class="acoes"><button class="btn" data-acao="avaliar-entrega" data-est="${eid}" data-mod="${mid}" data-ent="${xid}">Registrar avaliação</button></div></div>`, { volta: ["#/avaliacoes", "Avaliações"], ativo: "avaliacoes" });
 }
 
+/* ------------------------------ dúvidas ------------------------------ */
+function cardDuvida(d, instrutor) {
+  const e = est(d.estId); const m = d.modId ? modPorId(d.modId) : null;
+  return `<div class="duvida ${d.resposta ? "" : "aberta"}"><div class="meta">${instrutor ? `<b>${esc(e?.nome || "—")}</b> · ` : ""}${m ? `${m.id} · ${esc(m.titulo)}` : "Geral"} · ${fmtHora(d.em)}</div><div class="perg">${esc(d.texto)}</div>
+    ${d.resposta ? `<div class="resp"><b>Resposta${d.respondidoEm ? ` · ${fmtHora(d.respondidoEm)}` : ""}:</b> ${esc(d.resposta)}</div>` : instrutor ? `<label for="rd-${d.id}">Resposta</label><textarea id="rd-${d.id}" style="min-height:70px"></textarea><div class="acoes"><button class="btn mini" data-acao="responder" data-id="${d.id}">Responder</button></div>` : `<p class="peq sub" style="margin:8px 0 0">Aguardando resposta.</p>`}</div>`;
+}
+function formDuvida(modFixo) {
+  return `<div class="painel">${modFixo ? `<input type="hidden" id="dv-mod" value="${modFixo}">` : `<label for="dv-mod">Sobre qual módulo?</label><select id="dv-mod"><option value="">Geral / outro assunto</option>${MODS.map(m => `<option value="${m.id}">${m.id} · ${esc(m.titulo)}</option>`).join("")}</select>`}
+    <label for="dv-txt">Sua dúvida ou questionamento</label><textarea id="dv-txt" placeholder="Descreva o caso, o que você tentou e onde travou."></textarea><div class="acoes"><button class="btn" data-acao="enviar-duvida">Enviar dúvida</button></div></div>`;
+}
+function telaDuvidasEst() {
+  const ds = S.db.duvidas.filter(d => d.estId === S.user.id);
+  return shell("Dúvidas", `<div class="faixa">Pergunte aqui tudo o que surgir. As perguntas e respostas ficam registradas e viram histórico do seu aprendizado.</div>${formDuvida()}<h2>Suas dúvidas</h2>${ds.length ? ds.map(d => cardDuvida(d, false)).join("") : `<div class="vazio">Nenhuma dúvida registrada ainda.</div>`}`, { ativo: "duvidas" });
+}
+function telaDuvidasInstrutor() {
+  const ds = S.db.duvidas; const ab = ds.filter(d => !d.resposta), rs = ds.filter(d => d.resposta);
+  return shell("Dúvidas", `<h2>Sem resposta (${ab.length})</h2>${ab.length ? ab.map(d => cardDuvida(d, true)).join("") : `<div class="vazio">Nenhuma dúvida pendente.</div>`}<h2>Respondidas</h2>${rs.length ? rs.slice(0, 60).map(d => cardDuvida(d, true)).join("") : `<div class="vazio">Sem histórico.</div>`}`, { ativo: "duvidas", sub: "Perguntas enviadas pelos estagiários. O número de dúvidas por módulo também alimenta o perfil." });
+}
+
+/* ------------------------------ demais telas da instrutora ------------------------------ */
 function telaEncontros() {
-  const ests = S.db.estagiarios.filter(e => e.ativo !== false);
-  return shell("Conversas semanais", `
-    <div class="faixa">30 minutos por semana: dúvidas, revisão do que foi executado e prioridades da semana seguinte.</div>
-    ${ests.length ? `<div class="painel"><div class="linha-form">
-      <div><label for="en-est">Estagiário</label><select id="en-est">${ests.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join("")}</select></div>
-      <div><label for="en-data">Data</label><input id="en-data" type="date" value="${hoje()}"></div>
+  const ests = ativos();
+  return shell("Conversas semanais", `<div class="faixa">30 minutos por semana: dúvidas, revisão do que foi executado e prioridades da semana seguinte.</div>
+    ${ests.length ? `<div class="painel"><div class="linha-form"><div><label for="en-est">Estagiário</label><select id="en-est">${ests.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join("")}</select></div><div><label for="en-data">Data</label><input id="en-data" type="date" value="${hoje()}"></div>
       <div><label for="en-gat">Gatilho</label><select id="en-gat"><option>Nenhum</option><option>Ajuste — estender a fase</option><option>Ajuste — reduzir nº de sites</option><option>Ajuste — voltar processo ao modo acompanhado</option><option>Aceleração — antecipar fase</option><option>Aceleração — ampliar sites</option></select></div></div>
-      <label for="en-rev">Dúvidas e revisão do que foi executado</label><textarea id="en-rev"></textarea>
-      <label for="en-pri">Prioridades da próxima semana</label><input id="en-pri" type="text">
-      <div class="acoes"><button class="btn" data-acao="salvar-encontro">Registrar conversa</button></div></div>` : `<div class="vazio">Cadastre um estagiário no Painel para registrar conversas.</div>`}
-    <h2>Histórico</h2>
-    ${S.db.encontros.length ? S.db.encontros.map(x => `<div class="painel"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${esc(est(x.estId)?.nome || "—")} · ${fmt(x.data)}</b>${x.gatilho !== "Nenhum" ? `<span class="st st-reciclagem">${esc(x.gatilho)}</span>` : ""}</div>
-      <p style="white-space:pre-wrap;margin-top:6px">${esc(x.revisao)}</p>${x.prioridades ? `<p class="peq"><b>Próxima semana:</b> ${esc(x.prioridades)}</p>` : ""}
-      <button class="btn linha mini" data-acao="apagar-encontro" data-id="${x.id}">Apagar</button></div>`).join("") : `<div class="vazio">Nenhuma conversa registrada.</div>`}`,
-    { ativo: "encontros", sub: "Registro do acompanhamento contínuo e dos gatilhos de ajuste ou aceleração." });
+      <label for="en-rev">Dúvidas e revisão do que foi executado</label><textarea id="en-rev"></textarea><label for="en-pri">Prioridades da próxima semana</label><input id="en-pri" type="text"><div class="acoes"><button class="btn" data-acao="salvar-encontro">Registrar conversa</button></div></div>` : `<div class="vazio">Cadastre um estagiário no Painel.</div>`}
+    <h2>Histórico</h2>${S.db.encontros.length ? S.db.encontros.map(x => `<div class="painel"><b>${esc(est(x.estId)?.nome || "—")} · ${fmt(x.data)}</b>${x.gatilho !== "Nenhum" ? ` <span class="st st-reciclagem">${esc(x.gatilho)}</span>` : ""}<p style="white-space:pre-wrap;margin-top:6px">${esc(x.revisao)}</p>${x.prioridades ? `<p class="peq"><b>Próxima semana:</b> ${esc(x.prioridades)}</p>` : ""}<button class="btn linha mini" data-acao="apagar-encontro" data-id="${x.id}">Apagar</button></div>`).join("") : `<div class="vazio">Nenhuma conversa registrada.</div>`}`, { ativo: "encontros" });
 }
-
 function telaQuestoes() {
-  const blocos = C.fases.map(f => `<h2>Fase ${f.n} · ${esc(f.nome)}</h2>` + MODS.filter(m => m.fase === f.n).map(m => {
-    const qs = [...m.questoes, ...(S.db.questoesExtras[m.id] || []).map(q => ({ ...q, extra: true }))];
-    const ativas = qs.filter(q => !S.db.questoesOff[q.id]).length;
-    return `<details class="acc"><summary><span>${m.id} · ${esc(m.titulo)}</span><span class="peq sub">${ativas} ativas</span></summary><div class="corpo">
-      ${qs.map((q, i) => `<div class="questao" style="${S.db.questoesOff[q.id] ? "opacity:.5" : ""}"><div class="qh"><span class="qn">${i + 1}. ${{ mc: "Objetiva", aberta: "Dissertativa", pratica: "Prática" }[q.tipo]}${q.extra ? " · sua" : ""}</span><span class="qt">peso ${q.peso}</span></div>
-        <div class="enun">${esc(q.enunciado)}</div>
+  const tipoN = { mc: "Objetiva", aberta: "Dissertativa", pratica: "Prática" };
+  return shell("Banco de questões", `<div class="faixa">Todas as perguntas com gabarito. Desative as que não fizerem sentido e crie as suas. Testes já enviados guardam as questões da época.</div>` + C.fases.map(f => `<h2>Fase ${f.n} · ${esc(f.nome)}</h2>` + MODS.filter(m => m.fase === f.n).map(m => {
+    const qs = [...m.questoes, ...(S.db.questoesExtras[m.id] || []).map(q => ({ ...q, extra: true }))]; const at = qs.filter(q => !S.db.questoesOff[q.id]).length;
+    return `<details class="acc"><summary><span>${m.id} · ${esc(m.titulo)}</span><span class="peq sub">${at} ativas</span></summary><div class="corpo">
+      ${qs.map((q, i) => `<div class="questao" style="${S.db.questoesOff[q.id] ? "opacity:.5" : ""}"><div class="qh"><span class="qn">${i + 1}. ${tipoN[q.tipo]}${q.extra ? " · sua" : ""}</span><span class="qt">peso ${q.peso}</span></div><div class="enun">${esc(q.enunciado)}</div>
         ${q.tipo === "mc" ? q.opcoes.map((o, k) => `<div class="opcao ${k === q.correta ? "certa" : ""}" style="cursor:default">${k === q.correta ? "✓" : "○"} ${esc(o)}</div>`).join("") + (q.explicacao ? `<div class="gabarito"><b>Explicação</b>${esc(q.explicacao)}</div>` : "") : `<div class="gabarito"><b>O que se espera</b>${esc(q.esperado || "—")}</div>`}
-        <div class="acoes"><button class="btn linha mini" data-acao="toggle-questao" data-q="${q.id}">${S.db.questoesOff[q.id] ? "Reativar" : "Desativar"}</button>
-        ${q.extra ? `<button class="btn perigo mini" data-acao="apagar-questao" data-mod="${m.id}" data-q="${q.id}">Excluir</button>` : ""}</div></div>`).join("")}
-      <h3>Nova questão para ${m.id}</h3>
-      <div class="linha-form"><div><label for="nq-t-${m.id}">Tipo</label><select id="nq-t-${m.id}"><option value="mc">Objetiva</option><option value="aberta">Dissertativa</option><option value="pratica">Prática</option></select></div>
-        <div><label for="nq-p-${m.id}">Peso</label><input id="nq-p-${m.id}" type="number" min="1" max="10" value="1"></div></div>
+        <div class="acoes"><button class="btn linha mini" data-acao="toggle-questao" data-q="${q.id}">${S.db.questoesOff[q.id] ? "Reativar" : "Desativar"}</button>${q.extra ? `<button class="btn perigo mini" data-acao="apagar-questao" data-mod="${m.id}" data-q="${q.id}">Excluir</button>` : ""}</div></div>`).join("")}
+      <h3>Nova questão</h3><div class="linha-form"><div><label for="nq-t-${m.id}">Tipo</label><select id="nq-t-${m.id}"><option value="mc">Objetiva</option><option value="aberta">Dissertativa</option><option value="pratica">Prática</option></select></div><div><label for="nq-p-${m.id}">Peso</label><input id="nq-p-${m.id}" type="number" min="1" max="10" value="1"></div>
+        <div><label for="nq-e2-${m.id}">Eixo</label><select id="nq-e2-${m.id}">${Object.entries(EIXOS).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div></div>
       <label for="nq-e-${m.id}">Enunciado</label><textarea id="nq-e-${m.id}" style="min-height:70px"></textarea>
-      <label for="nq-o-${m.id}">Alternativas (objetiva) — uma por linha, comece a correta com *</label><textarea id="nq-o-${m.id}" style="min-height:90px" placeholder="*Alternativa correta&#10;Alternativa errada&#10;Alternativa errada"></textarea>
-      <label for="nq-g-${m.id}">Explicação (objetiva) ou o que se espera (dissertativa/prática)</label><textarea id="nq-g-${m.id}" style="min-height:70px"></textarea>
-      <div class="acoes"><button class="btn escuro mini" data-acao="add-questao" data-mod="${m.id}">Adicionar questão</button></div></div></details>`;
-  }).join("")).join("");
-  return shell("Banco de questões", `<div class="faixa">Veja todas as perguntas com gabarito, desative as que não fizerem sentido e crie as suas. Mudanças valem para os próximos testes; testes já enviados guardam as questões da época.</div>${blocos}`,
-    { ativo: "questoes" });
+      <label for="nq-o-${m.id}">Alternativas (objetiva) — uma por linha, a correta começa com *</label><textarea id="nq-o-${m.id}" style="min-height:90px" placeholder="*Alternativa correta&#10;Alternativa errada&#10;Alternativa errada"></textarea>
+      <label for="nq-g-${m.id}">Explicação ou o que se espera</label><textarea id="nq-g-${m.id}" style="min-height:70px"></textarea><div class="acoes"><button class="btn escuro mini" data-acao="add-questao" data-mod="${m.id}">Adicionar questão</button></div></div></details>`; }).join("")).join(""), { ativo: "questoes" });
 }
-
 function telaConteudo() {
-  return shell("Conteúdo da trilha", C.fases.map(f => `<h2>Fase ${f.n} · ${esc(f.nome)}</h2><p class="sub">${esc(f.semanas)} — ${esc(f.objetivo)}</p><p><b>Critério de saída:</b> ${esc(f.criterio)}</p>
-    <div class="estacoes">${MODS.filter(m => m.fase === f.n).map(m => `<a class="estacao" href="#/modulo/${m.id}"><span class="cod">${m.id} · ${m.dias} dias úteis</span><span class="tit">${esc(m.titulo)}</span><span class="peq sub">${esc(m.processo)} · nota mín. ${nota1(m.notaMin)}</span></a>`).join("")}</div>`).join(""),
-    { ativo: "conteudo", sub: "Tudo o que o estagiário vê em cada módulo. Para editar textos e prazos-padrão, altere o arquivo curriculo.js." });
+  return shell("Conteúdo da trilha", `<p class="sub">Horas estimadas pela complexidade de cada processo. Com a capacidade atual (${fmtH(horasSemana())}/semana), a trilha completa leva cerca de ${Math.ceil(MODS.reduce((a, m) => a + m.horasEstudo + m.horasIT, 0) / Math.max(horasSemana(), 0.1))} semanas.</p>` + C.fases.map(f => `<h2>Fase ${f.n} · ${esc(f.nome)}</h2><p><b>Critério de saída:</b> ${esc(f.criterio)}</p>
+    <div class="estacoes">${MODS.filter(m => m.fase === f.n).map(m => `<a class="estacao" href="#/modulo/${m.id}"><span class="cod">${m.id} · ${fmtH(m.horasEstudo)} + ${fmtH(m.horasIT)}</span><span class="tit">${esc(m.titulo)}</span><span class="peq sub">${esc(m.itTitulo)}</span></a>`).join("")}</div>`).join(""), { ativo: "conteudo", sub: "Para editar textos e horas-padrão, altere curriculo.js. Para um estagiário específico, use Ajustar no acompanhamento." });
 }
 
-/* ------------------------------ telas: estagiário ------------------------------ */
+/* ------------------------------ visão do gestor ------------------------------ */
+function telaGestor() {
+  const ests = ativos(); const tot = ests.reduce((a, e) => a + indicadores(e.id).aprov, 0);
+  const mg = media(ests.map(e => indicadores(e.id).mediaFinal).filter(x => x != null));
+  const cards = ests.map(e => { const ind = indicadores(e.id); const m = moduloAtual(e.id); const s = m ? situacao(e.id, m.id) : null; const pc = ind.total ? Math.round(ind.aprov / ind.total * 100) : 0;
+    const concl = MODS.filter(x => prog(e.id, x.id)?.status === "aprovado");
+    return `<div class="painel"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h2 style="margin:0">${esc(e.nome)}</h2>${semaforo(ind)}</div>
+      <div class="grade g4" style="margin-top:14px"><div class="num"><div class="v">${pc}%</div><div class="l">Da trilha concluída (${ind.aprov}/${ind.total})</div></div><div class="num"><div class="v">${m ? "F" + m.fase : "—"}</div><div class="l">${m ? esc(faseDe(m.fase).nome) : "Concluída"}</div></div>
+        <div class="num"><div class="v">${nota1(ind.mediaFinal)}</div><div class="l">Nota média dos módulos</div></div><div class="num"><div class="v">${ind.previsao ? fmt(ind.previsao) : "OK"}</div><div class="l">Previsão de término (plan. ${fmt(ind.fimPlanejado)})</div></div></div>
+      ${faixaModulos(e.id)}<p class="peq sub">Agora: ${m ? `<b>${m.id} · ${esc(m.titulo)}</b> — ${ROT[s.st]}` : "trilha concluída"}</p>
+      <div class="grafico"><h3>Progresso planejado × realizado</h3>${curvaS(e.id)}</div>
+      ${concl.length ? `<div class="tabela-wrap"><table><thead><tr><th>Módulo concluído</th><th>Concluído em</th><th>Nota final</th><th></th></tr></thead><tbody>${concl.map(x => { const p = prog(e.id, x.id); return `<tr><td>${x.id} · ${esc(x.titulo)}</td><td>${fmt(p.aprovadoEm)}</td><td><b>${nota1(notaFinal(p))}</b></td><td>${p.entregas?.length ? `<a href="#/relatorio/${e.id}/${x.id}">Relatório</a>` : ""}</td></tr>`; }).join("")}</tbody></table></div>` : ""}</div>`; }).join("");
+  return shell("Visão do gestor", `<div class="grade g3"><div class="num"><div class="v">${ests.length}</div><div class="l">Estagiários em imersão</div></div><div class="num"><div class="v">${tot}</div><div class="l">Módulos concluídos no total</div></div><div class="num"><div class="v">${nota1(mg)}</div><div class="l">Nota média geral</div></div></div>
+    <h2>Progresso por estagiário</h2>${cards || `<div class="vazio">Nenhum estagiário em imersão.</div>`}
+    <p class="peq sub">Legenda das barras: cinza escuro = concluído; amarelo = teste ou IT em andamento; azul = em estudo; lilás = aguardando avaliação; laranja = reciclagem.</p>`,
+    { ativo: "gestor", sub: "Acompanhamento da imersão dos estagiários do GFC. Somente leitura." });
+}
+
+/* ------------------------------ estagiário ------------------------------ */
 function telaTrilha() {
-  const eid = S.user.id; const e = est(eid); const ind = indicadores(eid); const m = moduloAtual(eid);
-  const s = m ? situacao(eid, m.id) : null;
-  let proximo = "";
-  if (!m) proximo = `<p>Você concluiu todos os módulos do escopo. Combine com a instrutora a avaliação final e o plano dos próximos 90 dias.</p>`;
-  else if (s.st === "disponivel") proximo = `<p>Próximo módulo: <b>${esc(m.titulo)}</b>. Ao iniciar, você tem ${s.aj.dias} dias úteis de estudo e prática antes do teste.</p><div class="acoes"><a class="btn" href="#/modulo/${m.id}">Abrir módulo</a></div>`;
-  else if (s.st === "estudo" || s.st === "reciclagem") proximo = `<p>${s.st === "reciclagem" ? "Reciclagem" : "Estudo"} de <b>${esc(m.titulo)}</b>. O teste libera em <b>${fmt(s.p.prazo)}</b> (${s.faltam} dia${s.faltam === 1 ? "" : "s"} úte${s.faltam === 1 ? "il" : "is"}).</p><div class="acoes"><a class="btn" href="#/modulo/${m.id}">Continuar estudando</a></div>`;
-  else if (s.st === "teste") proximo = `<p>O teste de <b>${esc(m.titulo)}</b> está liberado. Nota mínima para avançar: ${nota1(s.aj.notaMin)}.</p><div class="acoes"><a class="btn" href="#/teste/${m.id}">Fazer o teste</a><a class="btn linha" href="#/modulo/${m.id}">Revisar o módulo</a></div>`;
-  else if (s.st === "avaliacao") proximo = `<p>Seu teste de <b>${esc(m.titulo)}</b> foi enviado e está com a instrutora. Você recebe a nota e o feedback aqui.</p>`;
-  const fases = C.fases.map(f => `<div class="fase"><div class="fn"><b>${f.n}</b>${esc(f.nome)}<div class="peq" style="text-transform:none;font-family:Barlow;font-weight:400;margin-top:4px">${esc(f.semanas)}</div></div>
-    <div class="estacoes">${MODS.filter(x => x.fase === f.n).map(x => { const sx = situacao(eid, x.id);
-      const cls = x === m ? "atual" : sx.st === "bloqueado" || sx.st === "dispensado" ? "bloq" : sx.st === "aprovado" ? "feito" : "";
-      const inner = `<span class="cod">${x.id}</span><span class="tit">${esc(x.titulo)}</span>${chip(sx.st)}`;
-      return sx.st === "bloqueado" ? `<div class="estacao ${cls}" aria-disabled="true">${inner}</div>` : `<a class="estacao ${cls}" href="#/modulo/${x.id}">${inner}</a>`; }).join("")}</div></div>`).join("");
+  const eid = S.user.id; const e = est(eid); const ind = indicadores(eid); const m = moduloAtual(eid); const s = m ? situacao(eid, m.id) : null;
+  const P = { disponivel: () => `<p>Próximo módulo: <b>${esc(m.titulo)}</b>. Planejado: ${fmtH(s.aj.horasEstudo)} de estudo e ${fmtH(s.aj.horasIT)} para a IT e a apresentação.</p><div class="acoes"><a class="btn" href="#/modulo/${m.id}">Abrir módulo</a></div>`,
+    estudo: () => `<p>Estudo de <b>${esc(m.titulo)}</b>. O teste libera em <b>${fmt(s.p.prazo)}</b>.</p><div class="acoes"><a class="btn" href="#/modulo/${m.id}">Continuar estudando</a></div>`,
+    teste: () => `<p>O teste de <b>${esc(m.titulo)}</b> está liberado. Nota mínima: ${nota1(s.aj.notaMin)}.</p><div class="acoes"><a class="btn" href="#/teste/${m.id}">Fazer o teste</a><a class="btn linha" href="#/modulo/${m.id}">Revisar o módulo</a></div>`,
+    avaliacao: () => `<p>Seu teste de <b>${esc(m.titulo)}</b> está com a instrutora.</p>`,
+    entrega: () => `<p>Teste aprovado. Agora monte a <b>${esc(m.itTitulo)}</b> e o relatório do módulo até <b>${fmt(s.p.prazoEntrega)}</b>.</p><div class="acoes"><a class="btn" href="#/modulo/${m.id}#entrega">Fazer a entrega</a></div>`,
+    apresentacao: () => `<p>IT entregue. Combine com a instrutora o horário da apresentação de <b>${esc(m.itTitulo)}</b>.</p>` };
+  P.reciclagem = P.estudo; P.ajuste = () => `<p>A instrutora pediu ajustes na IT de <b>${esc(m.titulo)}</b>. Novo prazo: <b>${fmt(s.p.prazoEntrega)}</b>.</p><div class="acoes"><a class="btn" href="#/modulo/${m.id}#entrega">Ajustar e reenviar</a></div>`;
+  const fases = C.fases.map(f => `<div class="fase"><div class="fn"><b>${f.n}</b>${esc(f.nome)}</div><div class="estacoes">${MODS.filter(x => x.fase === f.n).map(x => { const sx = situacao(eid, x.id); const cls = x === m ? "atual" : ["bloqueado", "dispensado"].includes(sx.st) ? "bloq" : sx.st === "aprovado" ? "feito" : ""; const inner = `<span class="cod">${x.id} · ${fmtH(sx.aj.horasEstudo + sx.aj.horasIT)}</span><span class="tit">${esc(x.titulo)}</span>${chip(sx.st)}`; return sx.st === "bloqueado" ? `<div class="estacao ${cls}">${inner}</div>` : `<a class="estacao ${cls}" href="#/modulo/${x.id}">${inner}</a>`; }).join("")}</div></div>`).join("");
   return shell(`Olá, ${(e.nome || "").split(" ")[0]}`, `
-    <div class="pdca-wrap"><div class="pdca">${anelPDCA(m ? etapaPDCA(s.st) : "A", !m)}</div>
-      <div><h2 style="margin-top:0">${m ? `${m.id} · ${esc(m.titulo)}` : "Trilha concluída"}</h2>${m ? `<p class="sub">Fase ${m.fase} · ${esc(faseDe(m.fase).nome)} — ${chip(s.st)}</p>` : ""}${proximo}</div></div>
-    <div class="grade g3" style="margin-top:28px">
-      <div class="num"><div class="v">${ind.aprov}/${ind.total}</div><div class="l">Módulos aprovados</div></div>
-      <div class="num"><div class="v">${ind.media != null ? nota1(ind.media) : "—"}</div><div class="l">Sua média na 1ª tentativa</div></div>
-      <div class="num"><div class="v">${fmt(ind.fimPlanejado)}</div><div class="l">Término planejado da imersão</div></div></div>
-    <h2>Sua trilha</h2><div class="trilho">${fases}</div>`,
-    { ativo: "trilha", sub: "Cada módulo é um ciclo PDCA: planeja, estuda e pratica, faz o teste, e avança ou recicla." });
+    <div class="pdca-wrap"><div class="pdca">${anelPDCA(m ? etapaPDCA(s.st) : "A", !m)}</div><div><h2 style="margin-top:0">${m ? `${m.id} · ${esc(m.titulo)}` : "Trilha concluída"}</h2>${m ? `<p class="sub">Fase ${m.fase} · ${esc(faseDe(m.fase).nome)} — ${chip(s.st)}</p>` : ""}${m ? P[s.st]() : "<p>Parabéns! Combine com a instrutora a avaliação final.</p>"}</div></div>
+    <div class="grade g3" style="margin-top:28px"><div class="num"><div class="v">${ind.aprov}/${ind.total}</div><div class="l">Módulos concluídos</div></div><div class="num"><div class="v">${nota1(ind.mediaFinal)}</div><div class="l">Sua nota média</div></div><div class="num"><div class="v">${fmt(ind.fimPlanejado)}</div><div class="l">Término planejado</div></div></div>
+    <h2>Sua trilha</h2><div class="trilho">${fases}</div>`, { ativo: "trilha", sub: "Cada módulo é um ciclo PDCA: estuda, faz o teste, transforma o aprendizado em Instrução Técnica e apresenta." });
 }
-
+function blocoEntrega(eid, m, s) {
+  const p = s.p; const ult = (p.entregas || []).at(-1); const rel = ult?.relatorio || {}; const gh = Store.gh();
+  const it1 = embaralhar(ITENS_APRENDI.map((x, i) => [i, ...x]), hashStr(m.id + eid)); const it2 = embaralhar(ITENS_SITUACAO.map((x, i) => [i, ...x]), hashStr(eid + m.id));
+  return `<h2 id="entrega">Entrega final do módulo</h2>
+    ${s.st === "ajuste" && ult?.feedback ? `<div class="aviso"><b>Ajustes pedidos pela instrutora:</b><br>${esc(ult.feedback)}</div>` : ""}
+    <div class="faixa">Monte a <b>${esc(m.itTitulo)}</b>: uma Instrução Técnica em formato de apresentação (PowerPoint), com mapa mental do processo, detalhada o suficiente para outra pessoa executar só lendo. Prazo: ${fmt(p.prazoEntrega)}. Depois de enviar, apresente para a instrutora.</div>
+    <h3>Estrutura da Instrução Técnica</h3>
+    <p class="peq">Capa com código, título, revisão, data e elaborador. Depois, um ou mais slides para cada seção:</p><ol class="secoes-it"><li><b>Objetivo</b>Para que serve o processo, em 2–3 linhas</li><li><b>Aplicação</b>Sites, frotas e situações em que se aplica</li><li><b>Responsáveis</b>Quem faz o quê (Engenharia, CSP, CP, Central Planning)</li><li><b>Definições</b>Termos técnicos usados (ROM, TSO, vida útil…)</li><li><b>Mapa mental do processo</b>Centro = processo; ramos = entradas, quem, passos, telas, saídas, indicadores, riscos</li><li><b>Passo a passo</b>Numerado, com telas e campos do GFC</li><li><b>Pontos de atenção</b>Regras, exceções e erros comuns</li><li><b>Impactos no processo</b>Indicadores, RMC, forecast e outras áreas afetadas</li><li><b>Referências</b>Manual, Estratégia, prints</li></ol>
+    <div class="acoes"><a class="btn escuro" href="${MODELO_IT}" download>Baixar modelo da IT (.pptx)</a></div>
+    <div class="painel" style="margin-top:18px"><h3 style="margin-top:0">Material</h3>
+      ${gh ? `<label for="et-arq">Arquivo da IT em PowerPoint (.pptx) e anexos · até 15 MB cada</label><input id="et-arq" type="file" multiple accept=".pptx,.ppt,.pdf,.png,.jpg,.jpeg,.xlsx,.docx">` : `<div class="aviso info">Upload de arquivos disponível quando a base está conectada ao GitHub. Por enquanto, informe um link.</div>`}
+      <label for="et-link">Link (opcional: OneDrive, SharePoint, Miro)</label><input id="et-link" type="url" value="${esc(ult?.link || "")}">
+      <h3>Relatório do módulo</h3>
+      <label for="et-proc">Como foi o seu processo de aprendizagem neste módulo?</label><textarea id="et-proc" placeholder="Como você estudou, o que praticou, com quem aprendeu, em que ordem.">${esc(rel.processo || "")}</textarea>
+      <label for="et-dif">Quais foram as principais dificuldades?</label><textarea id="et-dif">${esc(rel.dificuldades || "")}</textarea>
+      <label for="et-sup">O que você fez para superá-las?</label><textarea id="et-sup" style="min-height:80px">${esc(rel.superacao || "")}</textarea>
+      <fieldset style="border:0;padding:0;margin:14px 0 0"><legend style="font-weight:600;font-size:14px">O que mais ajudou você a aprender neste módulo? (escolha até 2)</legend>
+        ${it1.map(([i, , t]) => `<label class="check"><input type="checkbox" data-r1="${i}" ${(rel.r1i || []).includes(i) ? "checked" : ""}><span>${esc(t)}</span></label>`).join("")}</fieldset>
+      <fieldset style="border:0;padding:0;margin:14px 0 0"><legend style="font-weight:600;font-size:14px">Quando aparece uma situação que não está no manual, você normalmente…</legend>
+        ${it2.map(([i, , t]) => `<label class="check"><input type="radio" name="r2" value="${i}" ${rel.r2i === i ? "checked" : ""}><span>${esc(t)}</span></label>`).join("")}</fieldset>
+      <div class="linha-form"><div><label for="et-h">Horas dedicadas ao módulo (aprox.)</label><input id="et-h" type="number" min="0" step="0.5" value="${rel.horas ?? ""}"></div>
+        <div><label for="et-c">Quão seguro você se sente para executar este processo sozinho? (1 a 5)</label><select id="et-c">${[1, 2, 3, 4, 5].map(n => `<option ${rel.confianca === n ? "selected" : ""}>${n}</option>`).join("")}</select></div></div>
+      <div class="acoes"><button class="btn" data-acao="enviar-entrega" data-mod="${m.id}">Enviar IT e relatório</button></div><p class="ajuda" id="et-status"></p></div>`;
+}
 function telaModulo(mid, eid) {
   const m = modPorId(mid); if (!m) return shell("Módulo não encontrado", "", {});
-  const souEst = S.user.tipo === "estagiario";
-  const s = eid ? situacao(eid, mid) : null; const p = s?.p; const f = faseDe(m.fase);
-  const aj = eid ? s.aj : { dias: m.dias, notaMin: m.notaMin };
-  const etapa = s ? etapaPDCA(s.st) : "";
-  const podeEditar = souEst && p && (s.st === "estudo" || s.st === "reciclagem" || s.st === "teste");
+  const souEst = S.user.tipo === "estagiario"; const s = eid ? situacao(eid, mid) : null; const p = s?.p; const f = faseDe(m.fase);
+  const aj = s ? s.aj : { horasEstudo: m.horasEstudo, horasIT: m.horasIT, notaMin: m.notaMin };
+  const podeEditar = souEst && p && ["estudo", "reciclagem", "teste"].includes(s.st);
   let acao = "";
   if (s) {
-    if (s.st === "bloqueado") acao = `<div class="aviso">Conclua os módulos anteriores para liberar este.</div>`;
-    else if (s.st === "dispensado") acao = `<div class="aviso info">Este módulo está fora do seu escopo. O conteúdo fica disponível para consulta.</div>`;
-    else if (s.st === "disponivel") acao = souEst ? `<div class="painel cinza"><b>Planejar.</b> Ao iniciar, o prazo de ${aj.dias} dias úteis começa a contar hoje e o teste libera em ${fmt(addUteis(hoje(), aj.dias))}.<div class="acoes"><button class="btn" data-acao="iniciar" data-mod="${mid}">Iniciar módulo</button></div></div>` : `<div class="aviso info">Ainda não iniciado pelo estagiário.</div>`;
-    else if (s.st === "estudo" || s.st === "reciclagem") acao = `<div class="painel cinza"><b>${s.st === "reciclagem" ? "Reciclagem" : "Executar"}.</b> O teste libera em ${fmt(p.prazo)} (${s.faltam} dia(s) úteis). Use o tempo para estudar o material e praticar na rotina.</div>`;
-    else if (s.st === "teste") acao = `<div class="painel" style="border:2px solid var(--car);box-shadow:5px 5px 0 var(--am)"><b>Checar.</b> O teste de habilidade está liberado. Nota mínima: ${nota1(aj.notaMin)}.${souEst ? `<div class="acoes"><a class="btn" href="#/teste/${mid}">Fazer o teste</a></div>` : ""}</div>`;
-    else if (s.st === "avaliacao") acao = `<div class="aviso info">Teste enviado. Aguardando a avaliação da instrutora.${!souEst ? ` <a href="#/avaliar/${eid}/${mid}/${p.tentativas.find(t => t.status === "pendente")?.id}">Avaliar agora</a>` : ""}</div>`;
-    else if (s.st === "aprovado") acao = `<div class="aviso ok"><b>Agir: módulo aprovado</b> em ${fmt(p.aprovadoEm)} com nota ${nota1(p.tentativas.at(-1).nota)}.</div>`;
+    const A = { bloqueado: `<div class="aviso">Conclua os módulos anteriores para liberar este.</div>`, dispensado: `<div class="aviso info">Fora do escopo. Conteúdo disponível para consulta.</div>`,
+      disponivel: souEst ? `<div class="painel cinza"><b>Planejar.</b> Ao iniciar, o estudo planejado é de ${fmtH(aj.horasEstudo)}, distribuído pela sua capacidade semanal. O teste libera em ${fmt(addHoras(hoje(), aj.horasEstudo))}.<div class="acoes"><button class="btn" data-acao="iniciar" data-mod="${mid}">Iniciar módulo</button></div></div>` : `<div class="aviso info">Ainda não iniciado.</div>`,
+      estudo: `<div class="painel cinza"><b>Executar.</b> O teste libera em ${fmt(p?.prazo)} (${s.faltam} dia(s) útil(eis)). Estude o material e pratique na rotina.</div>`,
+      teste: `<div class="painel" style="border:2px solid var(--car);box-shadow:5px 5px 0 var(--am)"><b>Checar.</b> Teste liberado. Nota mínima: ${nota1(aj.notaMin)}.${souEst ? `<div class="acoes"><a class="btn" href="#/teste/${mid}">Fazer o teste</a></div>` : ""}</div>`,
+      avaliacao: `<div class="aviso info">Teste enviado, aguardando correção.${!souEst && p ? ` <a href="#/avaliar/${eid}/${mid}/${p.tentativas.find(t => t.status === "pendente")?.id}">Corrigir agora</a>` : ""}</div>`,
+      apresentacao: `<div class="aviso info">IT entregue. Aguardando a apresentação e a avaliação.${!souEst && p ? ` <a href="#/entrega/${eid}/${mid}/${p.entregas.find(x => x.status === "pendente")?.id}">Avaliar agora</a>` : ""} <a href="#/relatorio/${souEst ? "" : eid + "/"}${mid}">Ver relatório</a></div>`,
+      aprovado: `<div class="aviso ok"><b>Módulo concluído</b> em ${fmt(p?.aprovadoEm)} · nota final ${nota1(notaFinal(p))}. ${p?.entregas?.length ? `<a href="#/relatorio/${souEst ? "" : eid + "/"}${mid}">Relatório do módulo</a>` : ""}</div>` };
+    A.reciclagem = A.estudo; A.entrega = `<div class="aviso ok"><b>Teste aprovado (${nota1(p?.notaTeste)}).</b> Falta a entrega da IT e do relatório até ${fmt(p?.prazoEntrega)}.</div>`; A.ajuste = `<div class="aviso">A instrutora pediu ajustes na IT. Novo prazo: ${fmt(p?.prazoEntrega)}.</div>`;
+    acao = A[s.st] || "";
   }
-  const hist = p?.tentativas?.length ? `<h2>Tentativas e feedback</h2>${p.tentativas.map(t => `<div class="painel"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${t.n}ª tentativa · ${fmtHora(t.enviadoEm)}</b>${t.status === "avaliada" ? `<span><b>${nota1(t.nota)}</b> ${t.aprovado ? chip("aprovado") : chip("reciclagem")}</span>` : chip("avaliacao")}</div>
-    ${t.feedback ? `<div class="comentario">${esc(t.feedback)}</div>` : ""}${t.status === "avaliada" ? `<div class="acoes"><a class="btn linha mini" href="#/tentativa/${eid}/${mid}/${t.id}">Ver correção completa</a></div>` : ""}</div>`).join("")}` : "";
+  const hist = p?.tentativas?.length ? `<h2>Testes e feedback</h2>${p.tentativas.map(t => `<div class="painel"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${t.n}ª tentativa · ${fmtHora(t.enviadoEm)}</b>${t.status === "avaliada" ? `<span><b>${nota1(t.nota)}</b> ${t.aprovado ? `<span class="st st-aprovado">Aprovado</span>` : `<span class="st st-reciclagem">Reciclagem</span>`}</span>` : chip("avaliacao")}</div>${t.feedback ? `<div class="comentario">${esc(t.feedback)}</div>` : ""}${t.status === "avaliada" ? `<div class="acoes"><a class="btn linha mini" href="#/tentativa/${eid}/${mid}/${t.id}">Ver correção</a></div>` : ""}</div>`).join("")}` : "";
+  const duvs = eid ? S.db.duvidas.filter(d => d.estId === eid && d.modId === mid) : [];
   const ck = p?.checklist || {};
   return shell(`${m.id} · ${m.titulo}`, `
     <div class="faixa">${esc(m.objetivo)}</div>
-    <div class="plano"><div><small>Fase</small><strong>${f.n} · ${esc(f.nome)}</strong></div><div><small>Prazo de estudo</small><strong>${aj.dias} dias úteis</strong></div><div><small>Nota mínima</small><strong>${nota1(aj.notaMin)}</strong></div><div><small>Modo de prática</small><strong>${esc(m.modo)}</strong></div></div>
-    ${s ? `<div class="pdca-wrap"><div class="pdca">${anelPDCA(etapa, s.st === "aprovado")}</div><div>${legendaPDCA(etapa, s.st === "aprovado")}</div></div><div style="margin-top:18px">${acao}</div>` : ""}
+    <div class="plano"><div><small>Fase</small><strong>${f.n} · ${esc(f.nome)}</strong></div><div><small>Estudo</small><strong>${fmtH(aj.horasEstudo)}</strong></div><div><small>IT e apresentação</small><strong>${fmtH(aj.horasIT)}</strong></div><div><small>Nota mínima</small><strong>${nota1(aj.notaMin)}</strong></div></div>
+    ${s ? `<div class="pdca-wrap"><div class="pdca">${anelPDCA(etapaPDCA(s.st), s.st === "aprovado")}</div><div>${legendaPDCA(etapaPDCA(s.st), s.st === "aprovado")}</div></div><div style="margin-top:18px">${acao}</div>` : ""}
+    ${souEst && s && ["entrega", "ajuste"].includes(s.st) ? blocoEntrega(eid, m, s) : ""}
     <h2>Por que esta etapa importa</h2><ul class="lista">${m.porque.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
     <h2>O que você influencia</h2><ul class="lista">${m.influencia.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-    <h2>Como fazer</h2><p class="peq sub">Referência: ${esc(m.ref)} · Processo ${esc(m.processo)}</p>
-    <ol class="passos">${m.passos.map(x => `<li><span>${esc(x)}</span></li>`).join("")}</ol>
+    <h2>Como fazer</h2><p class="peq sub">Referência: ${esc(m.ref)} · Modo de prática: ${esc(m.modo)}</p><ol class="passos">${m.passos.map(x => `<li><span>${esc(x)}</span></li>`).join("")}</ol>
     ${m.atencao.map(a => `<div class="atencao"><b>ATENÇÃO:</b> ${esc(a)}</div>`).join("")}
-    ${eid ? `<h2>Seu estudo</h2>
-      <div class="grade g2"><div><h3>Checklist</h3>${m.checklist.map((c, i) => `<label class="check"><input type="checkbox" data-ck="${i}" data-mod="${mid}" ${ck[i] ? "checked" : ""} ${podeEditar ? "" : "disabled"}><span>${esc(c)}</span></label>`).join("")}</div>
-      <div><h3>Autoavaliação de domínio</h3>${C.niveis.map(n => `<label class="check"><input type="radio" name="dom" value="${n}" data-dom data-mod="${mid}" ${p?.dominio === n ? "checked" : ""} ${podeEditar ? "" : "disabled"}><span>${n}</span></label>`).join("")}
-        ${p?.dominioValidado ? `<p class="peq">Validado pela instrutora: <b>${esc(p.dominioValidado)}</b></p>` : ""}</div></div>
-      <h3>Anotações e dúvidas para a conversa semanal</h3>
-      <textarea data-anot data-mod="${mid}" ${podeEditar ? "" : "disabled"} placeholder="O que ficou claro, o que ainda gera dúvida, casos reais que você acompanhou.">${esc(p?.anotacoes || "")}</textarea>
-      ${podeEditar ? `<p class="ajuda">Salvo automaticamente.</p>` : ""}` : ""}
-    ${hist}`,
-    { volta: souEst ? ["#/trilha", "Minha trilha"] : eid ? [`#/estagiario/${eid}`, est(eid)?.nome || "Estagiário"] : ["#/conteudo", "Conteúdo da trilha"], ativo: souEst ? "trilha" : eid ? "painel" : "conteudo",
-      sub: `${esc(m.processo)} · ${esc(m.ref)}` });
+    ${eid ? `<h2>Seu estudo</h2><div class="grade g2"><div><h3>Checklist</h3>${m.checklist.map((c, i) => `<label class="check"><input type="checkbox" data-ck="${i}" data-mod="${mid}" ${ck[i] ? "checked" : ""} ${podeEditar ? "" : "disabled"}><span>${esc(c)}</span></label>`).join("")}</div>
+      <div><h3>Autoavaliação de domínio</h3>${C.niveis.map(n => `<label class="check"><input type="radio" name="dom" value="${n}" data-dom data-mod="${mid}" ${p?.dominio === n ? "checked" : ""} ${podeEditar ? "" : "disabled"}><span>${n}</span></label>`).join("")}${p?.dominioValidado ? `<p class="peq">Validado pela instrutora: <b>${esc(p.dominioValidado)}</b></p>` : ""}</div></div>
+      <h3>Anotações</h3><textarea data-anot data-mod="${mid}" ${podeEditar ? "" : "disabled"} placeholder="O que ficou claro, casos reais que você acompanhou.">${esc(p?.anotacoes || "")}</textarea>${podeEditar ? `<p class="ajuda">Salvo automaticamente.</p>` : ""}
+      <h2>Dúvidas deste módulo</h2>${duvs.map(d => cardDuvida(d, !souEst)).join("")}${souEst && p ? formDuvida(mid) : duvs.length ? "" : `<p class="sub">Nenhuma dúvida registrada.</p>`}` : ""}
+    ${hist}`, { volta: souEst ? ["#/trilha", "Minha trilha"] : eid ? [`#/estagiario/${eid}`, est(eid)?.nome || ""] : ["#/conteudo", "Conteúdo"], ativo: souEst ? "trilha" : eid ? "painel" : "conteudo", sub: `${esc(m.processo)} · ${esc(m.itTitulo)}` });
 }
-
 function telaTeste(mid) {
   const eid = S.user.id; const m = modPorId(mid); const s = situacao(eid, mid);
-  if (s.st !== "teste") return shell("Teste indisponível", `<div class="aviso">${s.st === "estudo" || s.st === "reciclagem" ? `O teste libera em ${fmt(s.p.prazo)}.` : "Este teste não está disponível agora."}</div><a class="btn" href="#/modulo/${mid}">Voltar ao módulo</a>`, { ativo: "trilha" });
+  if (s.st !== "teste") return shell("Teste indisponível", `<div class="aviso">${["estudo", "reciclagem"].includes(s.st) ? `O teste libera em ${fmt(s.p.prazo)}.` : "Este teste não está disponível agora."}</div><a class="btn" href="#/modulo/${mid}">Voltar</a>`, { ativo: "trilha" });
   const qs = questoesDe(mid); const rasc = JSON.parse(localStorage.getItem(K_RASC + eid + mid) || "{}");
-  return shell(`Teste · ${m.id}`, `
-    <div class="faixa">${esc(m.titulo)} · ${qs.length} questões · nota mínima ${nota1(s.aj.notaMin)}. As objetivas são corrigidas na hora; as dissertativas e práticas, pela instrutora. Seu rascunho fica salvo neste navegador até o envio.</div>
-    ${qs.map((q, i) => `<div class="questao"><div class="qh"><span class="qn">Questão ${i + 1}</span><span class="qt">${{ mc: "Objetiva", aberta: "Dissertativa", pratica: "Prática" }[q.tipo]} · peso ${q.peso}</span></div>
-      <div class="enun" id="en-${q.id}">${esc(q.enunciado)}</div>
+  return shell(`Teste · ${m.id}`, `<div class="faixa">${esc(m.titulo)} · ${qs.length} questões · nota mínima ${nota1(s.aj.notaMin)}. Rascunho salvo neste navegador até o envio.</div>
+    ${qs.map((q, i) => `<div class="questao"><div class="qh"><span class="qn">Questão ${i + 1}</span><span class="qt">${{ mc: "Objetiva", aberta: "Dissertativa", pratica: "Prática" }[q.tipo]} · peso ${q.peso}</span></div><div class="enun" id="en-${q.id}">${esc(q.enunciado)}</div>
       ${q.tipo === "mc" ? `<div role="radiogroup" aria-labelledby="en-${q.id}">${q.opcoes.map((o, k) => `<label class="opcao"><input type="radio" name="r-${q.id}" value="${k}" data-resp="${q.id}" ${String(rasc[q.id]) === String(k) ? "checked" : ""}><span>${esc(o)}</span></label>`).join("")}</div>`
-      : `<textarea data-resp="${q.id}" aria-labelledby="en-${q.id}" placeholder="${q.tipo === "pratica" ? "Descreva o que você fez, os dados e o resultado." : "Responda com suas palavras."}">${esc(rasc[q.id]?.texto || "")}</textarea>
-        ${q.tipo === "pratica" ? `<label for="lk-${q.id}">Link da evidência (opcional: SharePoint, OneDrive, e-mail)</label><input id="lk-${q.id}" type="url" data-link="${q.id}" value="${esc(rasc[q.id]?.link || "")}">` : ""}`}</div>`).join("")}
-    <div class="acoes"><button class="btn" data-acao="enviar-teste" data-mod="${mid}">Enviar teste para avaliação</button><a class="btn linha" href="#/modulo/${mid}">Voltar ao módulo</a></div>`,
-    { volta: [`#/modulo/${mid}`, m.titulo], ativo: "trilha" });
+      : `<textarea data-resp="${q.id}" aria-labelledby="en-${q.id}">${esc(rasc[q.id]?.texto || "")}</textarea>${q.tipo === "pratica" ? `<label for="lk-${q.id}">Link da evidência (opcional)</label><input id="lk-${q.id}" type="url" data-link="${q.id}" value="${esc(rasc[q.id]?.link || "")}">` : ""}`}</div>`).join("")}
+    <div class="acoes"><button class="btn" data-acao="enviar-teste" data-mod="${mid}">Enviar teste</button><a class="btn linha" href="#/modulo/${mid}">Voltar ao módulo</a></div>`, { volta: [`#/modulo/${mid}`, m.titulo], ativo: "trilha" });
 }
-
 function telaTentativa(eid, mid, tid) {
-  const m = modPorId(mid), p = prog(eid, mid), t = p?.tentativas?.find(x => x.id === tid);
-  if (!t) return shell("Tentativa não encontrada", "", {});
-  const aval = t.status === "avaliada";
-  const souEst = S.user.tipo === "estagiario";
-  const qs = t.questoes.map((q, i) => {
-    const r = t.respostas[q.id]; const n = t.notas?.[q.id];
-    let bloco = q.tipo === "mc"
-      ? q.opcoes.map((o, k) => `<div class="opcao ${aval && k === q.correta ? "certa" : aval && k === Number(r) ? "errada" : ""}" style="cursor:default"><span>${k === Number(r) ? "●" : "○"}</span><span>${esc(o)}</span></div>`).join("") + (aval && q.explicacao ? `<div class="gabarito"><b>Explicação</b>${esc(q.explicacao)}</div>` : "")
-      : `<div class="resposta">${esc(r?.texto || "(sem resposta)")}</div>${r?.link ? `<p class="peq">Evidência: <a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.link)}</a></p>` : ""}${aval ? `<div class="gabarito"><b>O que se esperava</b>${esc(q.esperado || "—")}</div>` : ""}`;
-    return `<div class="questao"><div class="qh"><span class="qn">Questão ${i + 1}</span><span class="qt">${aval ? `<b>${n?.nota ?? 0} de ${q.peso}</b>` : `peso ${q.peso}`}</span></div><div class="enun">${esc(q.enunciado)}</div>${bloco}${n?.coment ? `<div class="comentario"><b>Instrutora:</b> ${esc(n.coment)}</div>` : ""}</div>`;
-  }).join("");
-  return shell(`${m.id} · ${t.n}ª tentativa`, `
-    ${aval ? `<div class="resultado"><div class="nota">${nota1(t.nota)}</div><div><div class="rot">${t.aprovado ? "Aprovado — próximo módulo liberado" : "Reciclagem — novo teste em " + fmt(t.novoPrazo)}</div><div class="peq">Nota mínima ${nota1(t.notaMin)} · avaliado em ${fmtHora(t.avaliadoEm)} · domínio validado: ${esc(t.dominio || "—")}</div></div></div>
-      ${t.feedback ? `<h2>Feedback da instrutora</h2><div class="comentario" style="font-size:16px;white-space:pre-wrap">${esc(t.feedback)}</div>` : ""}`
-      : `<div class="aviso info">Aguardando avaliação da instrutora.</div>`}
-    <h2>Questões</h2>${qs}`,
+  const m = modPorId(mid), p = prog(eid, mid), t = p?.tentativas?.find(x => x.id === tid); if (!t) return shell("Tentativa não encontrada", "", {});
+  const aval = t.status === "avaliada"; const souEst = S.user.tipo === "estagiario";
+  const qs = t.questoes.map((q, i) => { const r = t.respostas[q.id]; const n = t.notas?.[q.id];
+    const bloco = q.tipo === "mc" ? q.opcoes.map((o, k) => `<div class="opcao ${aval && k === q.correta ? "certa" : aval && k === Number(r) ? "errada" : ""}" style="cursor:default"><span>${k === Number(r) ? "●" : "○"}</span><span>${esc(o)}</span></div>`).join("") + (aval && q.explicacao ? `<div class="gabarito"><b>Explicação</b>${esc(q.explicacao)}</div>` : "")
+      : `<div class="resposta">${esc(r?.texto || "(sem resposta)")}</div>${aval ? `<div class="gabarito"><b>O que se esperava</b>${esc(q.esperado || "—")}</div>` : ""}`;
+    return `<div class="questao"><div class="qh"><span class="qn">Questão ${i + 1}</span><span class="qt">${aval ? `<b>${n?.nota ?? 0} de ${q.peso}</b>` : `peso ${q.peso}`}</span></div><div class="enun">${esc(q.enunciado)}</div>${bloco}${n?.coment ? `<div class="comentario"><b>Instrutora:</b> ${esc(n.coment)}</div>` : ""}</div>`; }).join("");
+  return shell(`${m.id} · teste, ${t.n}ª tentativa`, `${aval ? `<div class="resultado"><div class="nota">${nota1(t.nota)}</div><div><div class="rot">${t.aprovado ? "Aprovado — siga para a IT" : "Reciclagem — novo teste em " + fmt(t.novoPrazo)}</div><div class="peq">Nota mínima ${nota1(t.notaMin)} · ${fmtHora(t.avaliadoEm)}</div></div></div>${t.feedback ? `<h2>Feedback</h2><div class="comentario" style="font-size:16px;white-space:pre-wrap">${esc(t.feedback)}</div>` : ""}` : `<div class="aviso info">Aguardando correção.</div>`}<h2>Questões</h2>${qs}`,
     { volta: souEst ? [`#/modulo/${mid}`, m.titulo] : [`#/estagiario/${eid}`, est(eid)?.nome || ""], ativo: souEst ? "trilha" : "avaliacoes" });
 }
-
 function telaResultados() {
-  const eid = S.user.id; const linhas = [];
-  for (const m of MODS) for (const t of (prog(eid, m.id)?.tentativas || [])) linhas.push({ m, t });
-  return shell("Meus resultados", linhas.length ? `<div class="tabela-wrap"><table><thead><tr><th>Módulo</th><th>Tentativa</th><th>Enviado</th><th>Nota</th><th>Resultado</th><th></th></tr></thead><tbody>
-    ${linhas.map(({ m, t }) => `<tr><td>${m.id} · ${esc(m.titulo)}</td><td>${t.n}ª</td><td>${fmtHora(t.enviadoEm)}</td><td><b>${t.status === "avaliada" ? nota1(t.nota) : "—"}</b></td><td>${t.status === "avaliada" ? (t.aprovado ? chip("aprovado") : chip("reciclagem")) : chip("avaliacao")}</td><td><a class="btn linha mini" href="#/tentativa/${eid}/${m.id}/${t.id}">Ver</a></td></tr>`).join("")}</tbody></table></div>`
-    : `<div class="vazio">Você ainda não fez nenhum teste. Eles aparecem aqui com nota e feedback.</div>`, { ativo: "resultados" });
+  const eid = S.user.id; const linhas = MODS.filter(m => prog(eid, m.id)?.tentativas?.length);
+  return shell("Meus resultados", linhas.length ? `<div class="tabela-wrap"><table><thead><tr><th>Módulo</th><th>Teste</th><th>IT</th><th>Final</th><th>Situação</th><th></th></tr></thead><tbody>${linhas.map(m => { const p = prog(eid, m.id); const s = situacao(eid, m.id); return `<tr><td>${m.id} · ${esc(m.titulo)}</td><td>${p.tentativas.filter(t => t.status === "avaliada").map(t => `<a href="#/tentativa/${m.id}/${t.id}">${nota1(t.nota)}</a>`).join(" · ") || "—"}</td><td>${(p.entregas || []).filter(x => x.status === "avaliada").map(x => nota1(x.nota)).join(" · ") || "—"}</td><td><b>${s.st === "aprovado" ? nota1(notaFinal(p)) : "—"}</b></td><td>${chip(s.st)}</td><td>${p.entregas?.length ? `<a class="btn linha mini" href="#/relatorio/${m.id}">Relatório</a>` : ""}</td></tr>`; }).join("")}</tbody></table></div>` : `<div class="vazio">Você ainda não fez nenhum teste.</div>`, { ativo: "resultados" });
+}
+
+/* ------------------------------ relatório de conclusão de módulo ------------------------------ */
+function telaRelatorio(eid, mid) {
+  const e = est(eid), m = modPorId(mid), p = prog(eid, mid); const t = S.user.tipo;
+  if (!e || !m || !p) return shell("Relatório indisponível", `<a class="btn" href="#/">Voltar</a>`, {});
+  const s = situacao(eid, mid); const x = (p.entregas || []).at(-1); const av = p.tentativas.filter(z => z.status === "avaliada");
+  const duvs = S.db.duvidas.filter(d => d.estId === eid && d.modId === mid);
+  const plano = addHoras(p.inicio, s.aj.horasEstudo + s.aj.horasIT);
+  const corpo = `<div class="relatorio-doc"><div class="cab"><div><div class="peq sub">Relatório de conclusão de módulo · Trilha GFC</div><h2 style="margin:4px 0 0">${m.id} · ${esc(m.titulo)}</h2></div><div style="text-align:right">${chip(s.st)}<div class="peq sub" style="margin-top:6px">Gerado em ${fmt(hoje())}</div></div></div>
+    <dl><dt>Estagiário</dt><dd>${esc(e.nome)}</dd><dt>Fase</dt><dd>${m.fase} · ${esc(faseDe(m.fase).nome)}</dd><dt>Período</dt><dd>${fmt(p.inicio)} a ${p.aprovadoEm ? fmt(p.aprovadoEm) : "em andamento"} (planejado até ${fmt(plano)})</dd>
+      <dt>Horas planejadas</dt><dd>${fmtH(s.aj.horasEstudo)} estudo + ${fmtH(s.aj.horasIT)} IT${x?.relatorio?.horas ? ` · declaradas: ${fmtH(x.relatorio.horas)}` : ""}</dd>
+      <dt>Teste</dt><dd>${av.map(z => `${z.n}ª: ${nota1(z.nota)}${z.aprovado ? " (aprovado)" : ""}`).join(" · ") || "—"}</dd>
+      <dt>IT e apresentação</dt><dd>${(p.entregas || []).filter(z => z.status === "avaliada").map(z => `${z.n}ª: ${nota1(z.nota)}${z.aprovado ? " (aprovada)" : ""}${z.apresentadoEm ? ` em ${fmt(z.apresentadoEm)}` : ""}`).join(" · ") || "aguardando"}</dd>
+      <dt>Nota final</dt><dd><b>${s.st === "aprovado" ? nota1(notaFinal(p)) : "—"}</b></dd><dt>Domínio validado</dt><dd>${esc(p.dominioValidado || "—")}</dd></dl>
+    ${x?.status === "avaliada" ? `<h3>Rubrica da IT</h3><dl>${RUBRICA.map(r => `<dt>${r.nome}</dt><dd>${nota1(x.rubrica?.[r.k])}</dd>`).join("")}</dl>` : ""}
+    <h2>Relato do estagiário</h2>${x ? blocoRelato(x.relatorio) : `<p class="sub">Ainda não entregue.</p>`}
+    ${x ? `<h3>Material entregue</h3>${blocoArquivos(x)}` : ""}
+    <h2>Dúvidas registradas (${duvs.length})</h2>${duvs.length ? duvs.map(d => cardDuvida(d, false)).join("") : `<p class="sub">Nenhuma dúvida registrada neste módulo.</p>`}
+    <h2>Feedback da instrutora</h2>${av.filter(z => z.feedback).map(z => `<p><b>Teste, ${z.n}ª tentativa:</b></p><div class="texto-livre">${esc(z.feedback)}</div>`).join("")}${(p.entregas || []).filter(z => z.feedback).map(z => `<p><b>IT, ${z.n}ª versão:</b></p><div class="texto-livre">${esc(z.feedback)}</div>`).join("") || ""}
+    <div class="acoes"><button class="btn escuro" data-acao="imprimir">Imprimir / salvar em PDF</button></div></div>`;
+  const volta = t === "gestor" ? ["#/gestor", "Visão geral"] : t === "estagiario" ? [`#/modulo/${mid}`, m.titulo] : [`#/estagiario/${eid}`, e.nome];
+  return shell("Relatório do módulo", corpo, { volta, ativo: t === "gestor" ? "gestor" : t === "estagiario" ? "resultados" : "avaliacoes" });
 }
 
 /* ------------------------------ configurações ------------------------------ */
 function telaConfig(publico) {
-  const c = Store.cfg(); const ins = S.user?.tipo === "instrutor";
-  const corpo = `
-    <h2>Onde a base de dados fica</h2>
-    <p>A trilha grava tudo num único arquivo JSON dentro de um repositório do GitHub. Cada ação vira um commit, então existe histórico completo de quem fez o quê. Sem token, a base fica só neste navegador.</p>
-    <div class="painel">
-      <label class="check"><input type="radio" name="modo" value="github" ${c.modo === "github" ? "checked" : ""}><span><b>GitHub</b> — base compartilhada entre instrutora e estagiários</span></label>
-      <label class="check"><input type="radio" name="modo" value="local" ${c.modo !== "github" ? "checked" : ""}><span><b>Só este navegador</b> — para testar ou usar offline</span></label>
-      <div class="linha-form">
-        <div><label for="c-owner">Usuário ou organização</label><input id="c-owner" type="text" value="${esc(c.owner)}" placeholder="vitoria-sotreq"></div>
-        <div><label for="c-repo">Repositório da base</label><input id="c-repo" type="text" value="${esc(c.repo)}" placeholder="trilha-gfc-dados"></div>
-        <div><label for="c-branch">Branch</label><input id="c-branch" type="text" value="${esc(c.branch)}"></div>
-        <div><label for="c-path">Caminho do arquivo</label><input id="c-path" type="text" value="${esc(c.path)}"></div></div>
-      <label for="c-token">Token de acesso (fine-grained, Contents: Read and write, só neste repositório)</label>
-      <input id="c-token" type="password" value="${esc(c.token)}" autocomplete="off" placeholder="github_pat_…">
-      <p class="ajuda">O token fica guardado apenas neste navegador. Nunca coloque o token no código publicado.</p>
-      <div class="acoes"><button class="btn" data-acao="salvar-config">Salvar e reconectar</button><button class="btn linha" data-acao="testar-config">Testar conexão</button></div>
-      <div id="c-res"></div></div>
-    ${S.db ? `<h2>Cópia de segurança</h2><div class="painel"><p>Baixe a base inteira em JSON a qualquer momento.${ins ? " Importar substitui a base atual." : ""}</p>
-      <div class="acoes"><button class="btn escuro" data-acao="exportar">Baixar base (.json)</button>
-      ${ins ? `<label class="btn linha" style="margin:0">Importar base (.json)<input type="file" accept="application/json" data-acao="importar" hidden></label>` : ""}</div></div>` : ""}
-    ${ins ? `<h2>Seu perfil</h2><div class="painel"><div class="linha-form"><div><label for="p-nome">Nome</label><input id="p-nome" type="text" value="${esc(S.db.instrutor.nome)}"></div><div><label for="p-pin">Novo PIN (vazio para manter)</label><input id="p-pin" type="password" inputmode="numeric"></div></div><div class="acoes"><button class="btn escuro" data-acao="salvar-perfil">Salvar perfil</button></div></div>` : ""}`;
+  const c = Store.cfg(); const ins = S.user?.tipo === "instrutor"; const cf = S.db?.config;
+  const corpo = `<h2>Onde a base de dados fica</h2><p>A trilha grava tudo num arquivo JSON dentro do repositório do GitHub. Sem token, a base fica só neste navegador.</p>
+    <div class="painel"><label class="check"><input type="radio" name="modo" value="github" ${c.modo === "github" ? "checked" : ""}><span><b>GitHub</b> — base compartilhada</span></label><label class="check"><input type="radio" name="modo" value="local" ${c.modo !== "github" ? "checked" : ""}><span><b>Só este navegador</b> — para testes</span></label>
+      <div class="linha-form"><div><label for="c-owner">Usuário</label><input id="c-owner" type="text" value="${esc(c.owner)}"></div><div><label for="c-repo">Repositório</label><input id="c-repo" type="text" value="${esc(c.repo)}"></div><div><label for="c-branch">Branch</label><input id="c-branch" type="text" value="${esc(c.branch)}"></div><div><label for="c-path">Arquivo</label><input id="c-path" type="text" value="${esc(c.path)}"></div></div>
+      <label for="c-token">Token de acesso (fine-grained, Contents: Read and write)</label><input id="c-token" type="password" value="${esc(c.token)}" autocomplete="off" placeholder="github_pat_…"><p class="ajuda">O token fica guardado só neste navegador.</p>
+      <div class="acoes"><button class="btn" data-acao="salvar-config">Salvar e reconectar</button><button class="btn linha" data-acao="testar-config">Testar conexão</button></div><div id="c-res"></div></div>
+    ${ins ? `<h2>Capacidade de estudo</h2><div class="painel"><p>Horas por dia que o estagiário dedica à trilha. Os prazos de teste e de IT são calculados a partir destas horas e da carga de cada módulo.</p>
+      <div class="cap-semana">${[1, 2, 3, 4, 5].map(d => `<div><label for="cap-${d}">${DIAS[d]}</label><input id="cap-${d}" type="number" min="0" max="6" step="0.5" value="${cf.capacidade[d]}"></div>`).join("")}</div>
+      <div class="linha-form" style="margin-top:6px"><div><label for="cf-peso">Peso do teste na nota final (%)</label><input id="cf-peso" type="number" min="0" max="100" step="5" value="${Math.round(cf.pesoTeste * 100)}"></div><div><label for="cf-minit">Nota mínima da IT</label><input id="cf-minit" type="number" min="0" max="10" step="0.5" value="${cf.notaMinIT}"></div></div>
+      <div class="acoes"><button class="btn escuro" data-acao="salvar-capacidade">Salvar</button></div></div>
+      <h2>Acesso do gestor</h2><div class="painel"><p>O gestor entra com o perfil Gestor e vê só a visão geral do progresso e os relatórios dos módulos. Ele precisa de um token com permissão de leitura (Contents: Read-only).</p>
+      <div class="linha-form"><div><label for="g-nome">Nome do gestor</label><input id="g-nome" type="text" value="${esc(cf.gestorNome || "")}"></div><div><label for="g-pin">${cf.gestorPinHash ? "Novo PIN (vazio mantém)" : "PIN do gestor"}</label><input id="g-pin" type="text" inputmode="numeric"></div></div>
+      <div class="acoes"><button class="btn escuro" data-acao="salvar-gestor">Salvar acesso do gestor</button></div></div>
+      <h2>Seu perfil</h2><div class="painel"><div class="linha-form"><div><label for="p-nome">Nome</label><input id="p-nome" type="text" value="${esc(S.db.instrutor.nome)}"></div><div><label for="p-pin">Novo PIN (vazio mantém)</label><input id="p-pin" type="password" inputmode="numeric"></div></div><div class="acoes"><button class="btn escuro" data-acao="salvar-perfil">Salvar perfil</button></div></div>` : ""}
+    ${S.db && S.user ? `<h2>Cópia de segurança</h2><div class="painel"><div class="acoes"><button class="btn escuro" data-acao="exportar">Baixar base (.json)</button>${ins ? `<label class="btn linha" style="margin:0">Importar base (.json)<input type="file" accept="application/json" data-acao="importar" hidden></label>` : ""}</div></div>` : ""}`;
   if (publico) return `<div class="login"><div class="lado"><span style="background:var(--car);color:#fff;font-family:var(--cond);font-weight:700;font-size:24px;padding:6px 12px;align-self:flex-start">Sotreq <span style="color:var(--am)">GFC</span></span><h1>Configurar armazenamento</h1><p><a href="#/">← Voltar para o login</a></p></div><div class="form" style="max-width:720px">${corpo}</div></div>`;
   return shell("Configurações", corpo, { ativo: "config" });
 }
 
 /* ------------------------------ eventos ------------------------------ */
-function val(id) { return ($("#" + id)?.value ?? "").trim(); }
+const val = id => ($("#" + id)?.value ?? "").trim();
 function ligar() {
-  $$("[data-acao]").forEach(el => {
-    const ev = el.tagName === "INPUT" && el.type === "file" ? "change" : "click";
-    el.addEventListener(ev, e => { if (el.tagName === "A") e.preventDefault(); acoes[el.dataset.acao]?.(el, e); });
-  });
-  $$(".perfil").forEach(b => b.addEventListener("click", () => {
-    $$(".perfil").forEach(x => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true");
-    $("#login-est").hidden = b.dataset.perfil !== "estagiario"; $("#login-pin").hidden = false; $("#l-pin").focus();
-  }));
+  $$("[data-acao]").forEach(el => { const ev = el.tagName === "INPUT" && el.type === "file" ? "change" : "click"; el.addEventListener(ev, e => { if (el.tagName === "A") e.preventDefault(); acoes[el.dataset.acao]?.(el, e); }); });
+  $$("[data-acao-change]").forEach(el => el.addEventListener("change", () => acoes[el.dataset.acaoChange]?.(el)));
+  $$(".perfil").forEach(b => b.addEventListener("click", () => { $$(".perfil").forEach(x => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); $("#login-est").hidden = b.dataset.perfil !== "estagiario"; $("#login-pin").hidden = false; $("#l-pin").focus(); }));
   $("#l-pin")?.addEventListener("keydown", e => { if (e.key === "Enter") acoes.entrar(); });
-  // estudo do estagiário: checklist, domínio, anotações (gravação agrupada)
-  $$("[data-ck]").forEach(el => el.addEventListener("change", () => { const mid = el.dataset.mod, i = el.dataset.ck, v = el.checked; const eid = S.user.id;
-    agendar(db => { const p = db.progresso[eid]?.[mid]; if (p) { p.checklist = p.checklist || {}; p.checklist[i] = v; } }, `checklist ${mid}`); }));
-  $$("[data-dom]").forEach(el => el.addEventListener("change", () => { const mid = el.dataset.mod, v = el.value, eid = S.user.id;
-    agendar(db => { const p = db.progresso[eid]?.[mid]; if (p) p.dominio = v; }, `autoavaliação ${mid}: ${v}`); }));
-  $$("[data-anot]").forEach(el => el.addEventListener("input", () => { const mid = el.dataset.mod, v = el.value, eid = S.user.id;
-    agendar(db => { const p = db.progresso[eid]?.[mid]; if (p) p.anotacoes = v; }, `anotações ${mid}`); }));
-  // rascunho do teste
-  const salvaRasc = () => { const mid = rota()[1]; if (!mid || rota()[0] !== "teste") return; const r = coletarRespostas(); localStorage.setItem(K_RASC + S.user.id + mid, JSON.stringify(r)); };
+  $$("[data-ck]").forEach(el => el.addEventListener("change", () => { const mid = el.dataset.mod, i = el.dataset.ck, v = el.checked, eid = S.user.id; agendar(db => { const p = db.progresso[eid]?.[mid]; if (p) { p.checklist = p.checklist || {}; p.checklist[i] = v; } }, `checklist ${mid}`); }));
+  $$("[data-dom]").forEach(el => el.addEventListener("change", () => { const mid = el.dataset.mod, v = el.value, eid = S.user.id; agendar(db => { const p = db.progresso[eid]?.[mid]; if (p) p.dominio = v; }, `autoavaliação ${mid}`); }));
+  $$("[data-anot]").forEach(el => el.addEventListener("input", () => { const mid = el.dataset.mod, v = el.value, eid = S.user.id; agendar(db => { const p = db.progresso[eid]?.[mid]; if (p) p.anotacoes = v; }, `anotações ${mid}`); }));
+  $$("[data-r1]").forEach(el => el.addEventListener("change", () => { const marc = $$("[data-r1]:checked"); if (marc.length > 2) { el.checked = false; toast("Escolha no máximo duas opções."); } }));
+  const salvaRasc = () => { const r = rota(); if (r[0] !== "teste") return; localStorage.setItem(K_RASC + S.user.id + r[1], JSON.stringify(coletarRespostas())); };
   $$("[data-resp],[data-link]").forEach(el => el.addEventListener(el.type === "radio" ? "change" : "input", salvaRasc));
-  // pré-visualização da nota na avaliação
-  const prev = () => {
-    const bt = $("[data-acao=enviar-avaliacao]"); if (!bt) return;
-    const t = tentativaDoBotao(bt); let tot = 0, ob = 0, falta = false;
+  const prevT = () => { const bt = $("[data-acao=enviar-avaliacao]"); if (!bt) return; const t = tentativaDoBotao(bt); let tot = 0, ob = 0, falta = false;
     for (const q of t.questoes) { tot += q.peso; if (q.tipo === "mc") ob += t.notas[q.id]?.nota ?? 0; else { const v = $(`[data-nota="${q.id}"]`).value; if (v === "") falta = true; else ob += Math.min(q.peso, Math.max(0, Number(v))); } }
-    const n = tot ? ob / tot * 10 : 0; const min = Number(bt.dataset.min);
-    $("#nota-prev").textContent = falta ? "—" : nota1(n);
-    $("#rot-prev").textContent = falta ? "Preencha as notas das questões dissertativas e práticas" : n >= min ? "Aprovado — libera o próximo módulo" : "Abaixo da nota mínima — reciclagem";
-    $("#av-recic").hidden = falta || n >= min;
-  };
-  $$("[data-nota]").forEach(el => el.addEventListener("input", prev)); prev();
+    const n = tot ? ob / tot * 10 : 0, min = Number(bt.dataset.min); $("#nota-prev").textContent = falta ? "—" : nota1(n); $("#rot-prev").textContent = falta ? "Preencha as notas das dissertativas e práticas" : n >= min ? "Aprovado — libera a etapa da IT" : "Abaixo da mínima — reciclagem"; $("#av-recic").hidden = falta || n >= min; };
+  $$("[data-nota]").forEach(el => el.addEventListener("input", prevT)); prevT();
+  const prevE = () => { if (!$("[data-rub]")) return; const n = {}; let falta = false; $$("[data-rub]").forEach(i => { if (i.value === "") falta = true; n[i.dataset.rub] = Math.min(10, Math.max(0, Number(i.value))); });
+    const nt = notaRubrica(n), min = S.db.config.notaMinIT; $("#nota-prev").textContent = falta ? "—" : nota1(nt); $("#rot-prev").textContent = falta ? "Preencha a rubrica" : nt >= min ? "IT aprovada — módulo concluído" : "Abaixo da mínima — ajustar a IT"; $("#ap-aj").hidden = falta || nt >= min; };
+  $$("[data-rub]").forEach(el => el.addEventListener("input", prevE)); prevE();
+  if (location.hash.endsWith("#entrega")) setTimeout(() => $("#entrega")?.scrollIntoView(), 50);
 }
-function coletarRespostas() {
-  const r = {};
-  $$("[data-resp]").forEach(el => { const q = el.dataset.resp; if (el.type === "radio") { if (el.checked) r[q] = Number(el.value); } else { r[q] = { texto: el.value, link: $(`[data-link="${q}"]`)?.value || "" }; } });
-  return r;
-}
-function tentativaDoBotao(bt) { return prog(bt.dataset.est, bt.dataset.mod).tentativas.find(t => t.id === bt.dataset.tent); }
+function coletarRespostas() { const r = {}; $$("[data-resp]").forEach(el => { const q = el.dataset.resp; if (el.type === "radio") { if (el.checked) r[q] = Number(el.value); } else r[q] = { texto: el.value, link: $(`[data-link="${q}"]`)?.value || "" }; }); return r; }
+const tentativaDoBotao = bt => prog(bt.dataset.est, bt.dataset.mod).tentativas.find(t => t.id === bt.dataset.tent);
+const pinOk = p => /^\d{4,8}$/.test(p);
 
 const acoes = {
-  "recarregar": () => location.reload(),
+  recarregar: () => location.reload(),
   "limpar-erro": () => { S.erroCarga = null; if (!S.db) S.db = migrar(novoDB()); ir("/config"); },
   "usar-local": () => { const c = Store.cfg(); c.modo = "local"; Store.salvarCfg(c); location.reload(); },
+  imprimir: () => window.print(),
+  "trocar-ind": el => ir("/indicadores/" + el.value),
   async "criar-instrutor"() {
     const nome = val("i-nome"), pin = val("i-pin"), pin2 = val("i-pin2");
-    if (!nome) return toast("Informe seu nome.", true);
-    if (!/^\d{4,8}$/.test(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true);
-    if (pin !== pin2) return toast("Os PINs não conferem.", true);
-    const h = await hashPin("instrutor", pin);
-    S.user = { tipo: "instrutor", id: "instrutor" };
-    const ok = await salvar(db => { db.instrutor = { nome, pinHash: h }; }, "perfil de instrutora criado");
-    if (ok) { sessionStorage.setItem(K_SES, JSON.stringify(S.user)); ir("/painel"); } else S.user = null;
+    if (!nome) return toast("Informe seu nome.", true); if (!pinOk(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true); if (pin !== pin2) return toast("Os PINs não conferem.", true);
+    const h = await hashPin("instrutor", pin); S.user = { tipo: "instrutor", id: "instrutor" };
+    if (await salvar(db => { db.instrutor = { nome, pinHash: h }; }, "perfil de instrutora criado")) { sessionStorage.setItem(K_SES, JSON.stringify(S.user)); ir("/painel"); } else S.user = null;
   },
   async entrar() {
-    const perfil = $(".perfil[aria-pressed=true]")?.dataset.perfil; const pin = val("l-pin");
-    if (!perfil) return toast("Escolha o perfil.", true);
+    const perfil = $(".perfil[aria-pressed=true]")?.dataset.perfil; const pin = val("l-pin"); if (!perfil) return toast("Escolha o perfil.", true);
     try { await Store.carregar(); } catch (e) { return toast(e.message, true); }
-    if (perfil === "instrutor") {
-      if (await hashPin("instrutor", pin) !== S.db.instrutor.pinHash) return toast("PIN incorreto.", true);
-      S.user = { tipo: "instrutor", id: "instrutor" };
-    } else {
-      const id = val("l-est"); const e = est(id); if (!e) return toast("Selecione seu nome.", true);
-      if (await hashPin(id, pin) !== e.pinHash) return toast("PIN incorreto.", true);
-      S.user = { tipo: "estagiario", id };
-    }
-    sessionStorage.setItem(K_SES, JSON.stringify(S.user)); ir(perfil === "instrutor" ? "/painel" : "/trilha");
+    if (perfil === "instrutor") { if (await hashPin("instrutor", pin) !== S.db.instrutor.pinHash) return toast("PIN incorreto.", true); S.user = { tipo: "instrutor", id: "instrutor" }; }
+    else if (perfil === "gestor") { if (!S.db.config.gestorPinHash) return toast("O acesso do gestor ainda não foi criado pela instrutora.", true); if (await hashPin("gestor", pin) !== S.db.config.gestorPinHash) return toast("PIN incorreto.", true); S.user = { tipo: "gestor", id: "gestor" }; }
+    else { const id = val("l-est"); const e = est(id); if (!e) return toast("Selecione seu nome.", true); if (await hashPin(id, pin) !== e.pinHash) return toast("PIN incorreto.", true); S.user = { tipo: "estagiario", id }; }
+    sessionStorage.setItem(K_SES, JSON.stringify(S.user)); ir({ instrutor: "/painel", gestor: "/gestor", estagiario: "/trilha" }[perfil]);
   },
   async "criar-estagiario"() {
     const nome = val("n-nome"), email = val("n-email"), inicio = val("n-inicio") || hoje(), pin = val("n-pin");
-    if (!nome) return toast("Informe o nome.", true);
-    if (!/^\d{4,8}$/.test(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true);
+    if (!nome) return toast("Informe o nome.", true); if (!pinOk(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true);
     const id = "e" + uid(); const h = await hashPin(id, pin);
-    salvar(db => { db.estagiarios.push({ id, nome, email, inicio, pinHash: h, ativo: true, criadoEm: new Date().toISOString() }); db.progresso[id] = {}; }, `estagiário cadastrado: ${nome}`, `${nome} cadastrado. Passe o PIN pessoalmente.`);
+    salvar(db => { db.estagiarios.push({ id, nome, email, inicio, pinHash: h, ativo: true, criadoEm: new Date().toISOString() }); db.progresso[id] = {}; }, `estagiário cadastrado: ${nome}`, `${nome} cadastrado.`);
   },
   async "salvar-estagiario"(el) {
-    const id = el.dataset.est, nome = val("e-nome"), inicio = val("e-inicio"), pin = val("e-pin");
-    if (pin && !/^\d{4,8}$/.test(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true);
-    const h = pin ? await hashPin(id, pin) : null;
-    salvar(db => { const e = db.estagiarios.find(x => x.id === id); if (!e) return; if (nome) e.nome = nome; if (inicio) e.inicio = inicio; if (h) e.pinHash = h; }, `cadastro atualizado: ${nome}`, "Cadastro salvo.");
+    const id = el.dataset.est, nome = val("e-nome"), inicio = val("e-inicio"), pin = val("e-pin"); if (pin && !pinOk(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true);
+    const h = pin ? await hashPin(id, pin) : null; salvar(db => { const e = db.estagiarios.find(x => x.id === id); if (!e) return; if (nome) e.nome = nome; if (inicio) e.inicio = inicio; if (h) e.pinHash = h; }, `cadastro atualizado: ${nome}`, "Cadastro salvo.");
   },
-  "arquivar-estagiario"(el) {
-    if (!confirm("Arquivar este estagiário? Ele some do painel e do login, mas o histórico continua na base.")) return;
-    const id = el.dataset.est; salvar(db => { const e = db.estagiarios.find(x => x.id === id); if (e) e.ativo = false; }, "estagiário arquivado", "Estagiário arquivado.").then(() => ir("/painel"));
-  },
+  "arquivar-estagiario"(el) { if (!confirm("Arquivar este estagiário? O histórico continua na base.")) return; const id = el.dataset.est; salvar(db => { const e = db.estagiarios.find(x => x.id === id); if (e) e.ativo = false; }, "estagiário arquivado", "Arquivado.").then(() => ir("/painel")); },
   "abrir-ajuste"(el) { const r = $("#aj-" + el.dataset.mod); r.hidden = !r.hidden; },
   "salvar-ajuste"(el) {
-    const eid = el.dataset.est, mid = el.dataset.mod;
-    const dias = Number(val("aj-d-" + mid)), notaMin = Number(val("aj-n-" + mid)), escopo = val("aj-e-" + mid) === "1", prazo = $("#aj-p-" + mid)?.value;
-    if (!(dias >= 1) || !(notaMin >= 0 && notaMin <= 10)) return toast("Confira prazo e nota mínima.", true);
-    salvar(db => {
-      db.ajustes[eid] = db.ajustes[eid] || {}; db.ajustes[eid][mid] = { dias, notaMin, escopo };
-      const p = db.progresso[eid]?.[mid]; if (p && prazo && (p.status === "estudo" || p.status === "reciclagem")) p.prazo = prazo;
-    }, `ajuste ${mid}: ${dias} d.u., nota mín. ${notaMin}${escopo ? "" : ", fora do escopo"}`, "Ajuste salvo.");
+    const eid = el.dataset.est, mid = el.dataset.mod; const he = Number(val("aj-h-" + mid)), hi = Number(val("aj-i-" + mid)), notaMin = Number(val("aj-n-" + mid)), escopo = val("aj-e-" + mid) === "1"; const prazo = $("#aj-p-" + mid)?.value, prazoX = $("#aj-x-" + mid)?.value;
+    if (!(he > 0) || !(hi > 0) || !(notaMin >= 0 && notaMin <= 10)) return toast("Confira horas e nota mínima.", true);
+    salvar(db => { db.ajustes[eid] = db.ajustes[eid] || {}; db.ajustes[eid][mid] = { horasEstudo: he, horasIT: hi, notaMin, escopo }; const p = db.progresso[eid]?.[mid];
+      if (p && prazo && ["estudo", "reciclagem"].includes(p.status)) p.prazo = prazo; if (p && prazoX && ["entrega", "ajuste_it"].includes(p.status)) p.prazoEntrega = prazoX; }, `ajuste ${mid}`, "Ajuste salvo.");
   },
   "liberar-teste"(el) { const { est: eid, mod: mid } = el.dataset; salvar(db => { const p = db.progresso[eid]?.[mid]; if (p) p.liberado = true; }, `teste ${mid} liberado antes do prazo`, "Teste liberado."); },
-  "reabrir"(el) {
-    const { est: eid, mod: mid } = el.dataset; if (!confirm("Reabrir o módulo para reciclagem? O estagiário terá de refazer o teste.")) return;
-    const dias = ajuste(eid, mid).dias;
-    salvar(db => { const p = db.progresso[eid]?.[mid]; if (p) { p.status = "reciclagem"; p.prazo = addUteis(hoje(), Math.max(2, Math.ceil(dias / 2))); p.liberado = false; delete p.aprovadoEm; } }, `módulo ${mid} reaberto para reciclagem`, "Módulo reaberto.");
-  },
+  reabrir(el) { const { est: eid, mod: mid } = el.dataset; if (!confirm("Reabrir o módulo? O estagiário refaz o teste e a IT.")) return; const h = Math.max(2, ajuste(eid, mid).horasEstudo / 2);
+    salvar(db => { const p = db.progresso[eid]?.[mid]; if (p) { p.status = "reciclagem"; p.prazo = addHoras(hoje(), h); p.liberado = false; delete p.aprovadoEm; delete p.notaIT; delete p.prazoEntrega; } }, `módulo ${mid} reaberto`, "Módulo reaberto."); },
   iniciar(el) {
-    const mid = el.dataset.mod, eid = S.user.id, aj = ajuste(eid, mid);
-    if (situacao(eid, mid).st !== "disponivel") return toast("Este módulo ainda não está liberado.", true);
-    const prazo = addUteis(hoje(), aj.dias);
-    salvar(db => { db.progresso[eid] = db.progresso[eid] || {}; if (db.progresso[eid][mid]) return;
-      db.progresso[eid][mid] = { status: "estudo", inicio: hoje(), prazo, prazoOriginal: prazo, liberado: false, checklist: {}, dominio: C.niveis[0], anotacoes: "", tentativas: [] }; }, `iniciou ${mid}`, "Módulo iniciado. Bons estudos.");
+    const mid = el.dataset.mod, eid = S.user.id, aj = ajuste(eid, mid); if (situacao(eid, mid).st !== "disponivel") return toast("Módulo ainda não liberado.", true);
+    const prazo = addHoras(hoje(), aj.horasEstudo);
+    salvar(db => { db.progresso[eid] = db.progresso[eid] || {}; if (db.progresso[eid][mid]) return; db.progresso[eid][mid] = { status: "estudo", inicio: hoje(), prazo, prazoOriginal: prazo, liberado: false, checklist: {}, dominio: C.niveis[0], anotacoes: "", tentativas: [], entregas: [] }; }, `iniciou ${mid}`, "Módulo iniciado. Bons estudos.");
   },
   "enviar-teste"(el) {
     const mid = el.dataset.mod, eid = S.user.id; const qs = questoesDe(mid); const r = coletarRespostas();
-    const falta = qs.filter(q => q.tipo === "mc" ? r[q.id] === undefined : !(r[q.id]?.texto || "").trim());
-    if (falta.length) return toast(`Responda todas as questões (${falta.length} em branco).`, true);
-    if (!confirm("Enviar o teste? Depois do envio não é possível alterar as respostas.")) return;
+    const falta = qs.filter(q => q.tipo === "mc" ? r[q.id] === undefined : !(r[q.id]?.texto || "").trim()); if (falta.length) return toast(`Responda todas as questões (${falta.length} em branco).`, true);
+    if (!confirm("Enviar o teste? Depois não é possível alterar.")) return;
     const notas = {}; for (const q of qs) if (q.tipo === "mc") notas[q.id] = { nota: r[q.id] === q.correta ? q.peso : 0, auto: true };
     const tid = "t" + uid();
-    salvar(db => { const p = db.progresso[eid]?.[mid]; if (!p || p.status === "avaliacao") return;
-      p.tentativas.push({ id: tid, n: p.tentativas.length + 1, enviadoEm: new Date().toISOString(), questoes: qs, respostas: r, notas, status: "pendente" });
-      p.status = "avaliacao"; }, `enviou o teste de ${mid}`, "Teste enviado para a instrutora.")
+    salvar(db => { const p = db.progresso[eid]?.[mid]; if (!p || p.status === "avaliacao") return; p.tentativas.push({ id: tid, n: p.tentativas.length + 1, enviadoEm: new Date().toISOString(), questoes: qs, respostas: r, notas, status: "pendente" }); p.status = "avaliacao"; }, `enviou o teste de ${mid}`, "Teste enviado.")
       .then(ok => { if (ok) { localStorage.removeItem(K_RASC + eid + mid); ir("/modulo/" + mid); } });
   },
   "enviar-avaliacao"(el) {
-    const { est: eid, mod: mid, tent: tid } = el.dataset; const t = tentativaDoBotao(el); const min = Number(el.dataset.min);
-    const notas = JSON.parse(JSON.stringify(t.notas || {}));
-    for (const q of t.questoes) {
-      const c = $(`[data-coment="${q.id}"]`)?.value.trim() || "";
-      if (q.tipo === "mc") { notas[q.id] = { ...(notas[q.id] || { nota: 0 }), coment: c }; continue; }
-      const v = $(`[data-nota="${q.id}"]`).value; if (v === "") return toast("Dê nota a todas as questões dissertativas e práticas.", true);
-      notas[q.id] = { nota: Math.min(q.peso, Math.max(0, Number(v))), coment: c };
-    }
-    const fb = val("av-fb"); if (!fb) return toast("Escreva o feedback geral: é o que orienta o próximo passo.", true);
-    const dom = val("av-dom"); const dias = Math.max(1, Number(val("av-dias")) || 3);
-    const nota = calcNota({ questoes: t.questoes, notas }); const aprovado = nota >= min;
-    salvar(db => {
-      const p = db.progresso[eid]?.[mid]; const tt = p?.tentativas.find(x => x.id === tid); if (!tt || tt.status !== "pendente") return;
-      Object.assign(tt, { notas, nota, aprovado, notaMin: min, feedback: fb, dominio: dom, status: "avaliada", avaliadoEm: new Date().toISOString() });
-      p.dominioValidado = dom;
-      if (aprovado) { p.status = "aprovado"; p.aprovadoEm = hoje(); }
-      else { p.status = "reciclagem"; p.prazo = addUteis(hoje(), dias); p.liberado = false; tt.novoPrazo = p.prazo; }
-    }, `avaliou ${mid}: ${nota1(nota)} (${aprovado ? "aprovado" : "reciclagem"})`, aprovado ? "Aprovado. O próximo módulo foi liberado." : "Reciclagem registrada com novo prazo.")
-      .then(ok => ok && ir("/estagiario/" + eid));
+    const { est: eid, mod: mid, tent: tid } = el.dataset; const t = tentativaDoBotao(el); const min = Number(el.dataset.min); const notas = JSON.parse(JSON.stringify(t.notas || {}));
+    for (const q of t.questoes) { const c = $(`[data-coment="${q.id}"]`)?.value.trim() || ""; if (q.tipo === "mc") { notas[q.id] = { ...(notas[q.id] || { nota: 0 }), coment: c }; continue; } const v = $(`[data-nota="${q.id}"]`).value; if (v === "") return toast("Dê nota a todas as dissertativas e práticas.", true); notas[q.id] = { nota: Math.min(q.peso, Math.max(0, Number(v))), coment: c }; }
+    const fb = val("av-fb"); if (!fb) return toast("Escreva o feedback geral.", true);
+    const dom = val("av-dom"); const h = Math.max(0.5, Number(val("av-h")) || 3); const nota = calcNota({ questoes: t.questoes, notas }); const ok = nota >= min; const hIT = ajuste(eid, mid).horasIT;
+    salvar(db => { const p = db.progresso[eid]?.[mid]; const tt = p?.tentativas.find(x => x.id === tid); if (!tt || tt.status !== "pendente") return;
+      Object.assign(tt, { notas, nota, aprovado: ok, notaMin: min, feedback: fb, dominio: dom, status: "avaliada", avaliadoEm: new Date().toISOString() }); p.dominioValidado = dom;
+      if (ok) { p.status = "entrega"; p.notaTeste = nota; p.prazoEntrega = addHoras(hoje(), hIT); p.entregas = p.entregas || []; }
+      else { p.status = "reciclagem"; p.prazo = addHoras(hoje(), h); p.liberado = false; tt.novoPrazo = p.prazo; } }, `corrigiu teste ${mid}: ${nota1(nota)}`, ok ? "Teste aprovado. Estagiário segue para a IT." : "Reciclagem registrada.")
+      .then(r => r && ir("/estagiario/" + eid));
   },
-  "salvar-encontro"() {
-    const estId = val("en-est"), data = val("en-data") || hoje(), gatilho = val("en-gat"), revisao = val("en-rev"), prioridades = val("en-pri");
-    if (!revisao) return toast("Registre ao menos as dúvidas e a revisão.", true);
-    salvar(db => { db.encontros.unshift({ id: "c" + uid(), estId, data, gatilho, revisao, prioridades }); db.encontros.sort((a, b) => b.data.localeCompare(a.data)); }, "conversa semanal registrada", "Conversa registrada.");
+  async "enviar-entrega"(el) {
+    const mid = el.dataset.mod, eid = S.user.id; const files = [...($("#et-arq")?.files || [])]; const link = val("et-link");
+    const processo = val("et-proc"), dificuldades = val("et-dif"), superacao = val("et-sup"); const r1i = $$("[data-r1]:checked").map(i => Number(i.dataset.r1)); const r2el = $("input[name=r2]:checked");
+    const p0 = prog(eid, mid); const ult = p0?.entregas?.at(-1);
+    if (!files.length && !link && !(ult?.arquivos?.length)) return toast("Envie o arquivo da IT ou informe um link.", true);
+    if (processo.length < 40 || dificuldades.length < 20) return toast("Descreva com mais detalhe seu processo de aprendizagem e as dificuldades.", true);
+    if (!r1i.length || !r2el) return toast("Responda às duas perguntas de reflexão.", true);
+    if (files.some(f => f.size > 15 * 1024 * 1024)) return toast("Cada arquivo pode ter até 15 MB. Use um link para arquivos maiores.", true);
+    if (!confirm("Enviar a IT e o relatório para a instrutora?")) return;
+    const st = $("#et-status"); el.disabled = true; const arquivos = [];
+    try { const pasta = `entregas/${eid}/${mid}/${Date.now()}`; for (const f of files) { st.textContent = `Enviando ${f.name}…`; const path = await Store.enviarArquivo(`${pasta}-${nomeSeguro(f.name)}`, f); arquivos.push({ nome: f.name, path, tamanho: f.size }); } }
+    catch (e) { el.disabled = false; st.textContent = ""; return toast(e.message, true); }
+    if (!arquivos.length && ult?.arquivos?.length && !link) arquivos.push(...ult.arquivos);
+    const relatorio = { processo, dificuldades, superacao, horas: Number(val("et-h")) || null, confianca: Number(val("et-c")), r1i, r1: r1i.map(i => ITENS_APRENDI[i][0]), r2i: Number(r2el.value), r2: ITENS_SITUACAO[Number(r2el.value)][0] };
+    const xid = "x" + uid();
+    salvar(db => { const p = db.progresso[eid]?.[mid]; if (!p || !["entrega", "ajuste_it"].includes(p.status)) return; p.entregas = p.entregas || []; p.entregas.push({ id: xid, n: p.entregas.length + 1, enviadoEm: new Date().toISOString(), arquivos, link, relatorio, status: "pendente" }); p.status = "apresentacao"; }, `entregou a IT de ${mid}`, "IT enviada. Combine a apresentação com a instrutora.")
+      .then(ok => ok && ir("/modulo/" + mid));
   },
-  "apagar-encontro"(el) { if (!confirm("Apagar este registro?")) return; const id = el.dataset.id; salvar(db => { db.encontros = db.encontros.filter(x => x.id !== id); }, "conversa semanal apagada"); },
-  "toggle-questao"(el) { const q = el.dataset.q; salvar(db => { if (db.questoesOff[q]) delete db.questoesOff[q]; else db.questoesOff[q] = true; }, `questão ${q} ${S.db.questoesOff[q] ? "reativada" : "desativada"}`); },
+  "avaliar-entrega"(el) {
+    const { est: eid, mod: mid, ent: xid } = el.dataset; const rub = {}; let falta = false; $$("[data-rub]").forEach(i => { if (i.value === "") falta = true; rub[i.dataset.rub] = Math.min(10, Math.max(0, Number(i.value))); });
+    if (falta) return toast("Preencha todos os critérios da rubrica.", true); const fb = val("ap-fb"); if (!fb) return toast("Escreva o feedback da apresentação.", true);
+    const nota = notaRubrica(rub), min = S.db.config.notaMinIT, ok = nota >= min, data = val("ap-data") || hoje(), h = Math.max(0.5, Number(val("ap-h")) || 2);
+    salvar(db => { const p = db.progresso[eid]?.[mid]; const x = p?.entregas?.find(z => z.id === xid); if (!x || x.status !== "pendente") return;
+      Object.assign(x, { rubrica: rub, nota, aprovado: ok, feedback: fb, apresentadoEm: data, status: "avaliada", avaliadoEm: new Date().toISOString() });
+      if (ok) { p.status = "aprovado"; p.notaIT = nota; p.aprovadoEm = hoje(); } else { p.status = "ajuste_it"; p.prazoEntrega = addHoras(hoje(), h); } }, `avaliou IT ${mid}: ${nota1(nota)}`, ok ? "Módulo concluído. Próximo liberado." : "Ajuste da IT solicitado.")
+      .then(r => r && ir("/estagiario/" + eid));
+  },
+  async baixar(el) { if (!Store.gh()) return toast("Download disponível com a base no GitHub.", true); try { toast("Baixando…"); await Store.baixarArquivo(el.dataset.path, el.dataset.nome); } catch (e) { toast(e.message, true); } },
+  "enviar-duvida"() {
+    const texto = val("dv-txt"), modId = val("dv-mod") || null, eid = S.user.id; if (texto.length < 10) return toast("Descreva a dúvida com um pouco mais de detalhe.", true);
+    salvar(db => { db.duvidas.unshift({ id: "d" + uid(), estId: eid, modId, texto, em: new Date().toISOString(), resposta: null }); }, `nova dúvida${modId ? " em " + modId : ""}`, "Dúvida enviada para a instrutora.");
+  },
+  responder(el) { const id = el.dataset.id, r = val("rd-" + id); if (!r) return toast("Escreva a resposta.", true); salvar(db => { const d = db.duvidas.find(x => x.id === id); if (d) { d.resposta = r; d.respondidoEm = new Date().toISOString(); d.lidaEst = false; } }, "respondeu dúvida", "Resposta registrada."); },
+  "salvar-encontro"() { const estId = val("en-est"), data = val("en-data") || hoje(), gatilho = val("en-gat"), revisao = val("en-rev"), prioridades = val("en-pri"); if (!revisao) return toast("Registre a revisão.", true); salvar(db => { db.encontros.unshift({ id: "c" + uid(), estId, data, gatilho, revisao, prioridades }); db.encontros.sort((a, b) => b.data.localeCompare(a.data)); }, "conversa semanal registrada", "Conversa registrada."); },
+  "apagar-encontro"(el) { if (!confirm("Apagar este registro?")) return; const id = el.dataset.id; salvar(db => { db.encontros = db.encontros.filter(x => x.id !== id); }, "conversa apagada"); },
+  "toggle-questao"(el) { const q = el.dataset.q; salvar(db => { if (db.questoesOff[q]) delete db.questoesOff[q]; else db.questoesOff[q] = true; }, `questão ${q} alterada`); },
   "apagar-questao"(el) { if (!confirm("Excluir esta questão?")) return; const { mod, q } = el.dataset; salvar(db => { db.questoesExtras[mod] = (db.questoesExtras[mod] || []).filter(x => x.id !== q); }, `questão ${q} excluída`); },
   "add-questao"(el) {
-    const mid = el.dataset.mod; const tipo = val("nq-t-" + mid), peso = Math.max(1, Number(val("nq-p-" + mid)) || 1), enunciado = val("nq-e-" + mid), g = val("nq-g-" + mid);
-    if (!enunciado) return toast("Escreva o enunciado.", true);
-    const q = { id: `${mid}x${uid()}`, tipo, peso, enunciado };
-    if (tipo === "mc") {
-      const linhas = val("nq-o-" + mid).split("\n").map(s => s.trim()).filter(Boolean);
-      const correta = linhas.findIndex(l => l.startsWith("*"));
-      if (linhas.length < 2 || correta < 0) return toast("Informe ao menos 2 alternativas e marque a correta com *.", true);
-      q.opcoes = linhas.map(l => l.replace(/^\*\s*/, "")); q.correta = correta; q.explicacao = g;
-    } else q.esperado = g;
+    const mid = el.dataset.mod; const tipo = val("nq-t-" + mid), peso = Math.max(1, Number(val("nq-p-" + mid)) || 1), enunciado = val("nq-e-" + mid), g = val("nq-g-" + mid), e = val("nq-e2-" + mid); if (!enunciado) return toast("Escreva o enunciado.", true);
+    const q = { id: `${mid}x${uid()}`, tipo, peso, enunciado, b: tipo === "mc" ? 3 : 4, e };
+    if (tipo === "mc") { const l = val("nq-o-" + mid).split("\n").map(s => s.trim()).filter(Boolean); const c = l.findIndex(x => x.startsWith("*")); if (l.length < 2 || c < 0) return toast("Informe 2+ alternativas e marque a correta com *.", true); q.opcoes = l.map(x => x.replace(/^\*\s*/, "")); q.correta = c; q.explicacao = g; } else q.esperado = g;
     salvar(db => { db.questoesExtras[mid] = db.questoesExtras[mid] || []; db.questoesExtras[mid].push(q); }, `nova questão em ${mid}`, "Questão adicionada.");
   },
-  async "salvar-config"() {
-    const modo = $("input[name=modo]:checked").value;
-    const c = { modo, owner: val("c-owner"), repo: val("c-repo"), branch: val("c-branch") || "main", path: val("c-path") || "data/db.json", token: val("c-token") };
-    if (modo === "github" && (!c.owner || !c.repo || !c.token)) return toast("Preencha usuário, repositório e token.", true);
-    Store.salvarCfg(c); toast("Configuração salva. Reconectando…"); setTimeout(() => location.reload(), 600);
-  },
+  "salvar-capacidade"() { const capN = {}; for (const d of [1, 2, 3, 4, 5]) capN[d] = Math.max(0, Number(val("cap-" + d)) || 0); if (Object.values(capN).reduce((a, b) => a + b, 0) <= 0) return toast("Informe ao menos um dia com horas de estudo.", true);
+    const peso = Math.min(100, Math.max(0, Number(val("cf-peso")))) / 100, minIT = Number(val("cf-minit")); salvar(db => { db.config.capacidade = capN; db.config.pesoTeste = peso; db.config.notaMinIT = minIT; }, "capacidade de estudo atualizada", "Configuração salva. Novos prazos já usam estas horas."); },
+  async "salvar-gestor"() { const nome = val("g-nome"), pin = val("g-pin"); if (pin && !pinOk(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true); if (!pin && !S.db.config.gestorPinHash) return toast("Defina um PIN para o gestor.", true); const h = pin ? await hashPin("gestor", pin) : null; salvar(db => { db.config.gestorNome = nome; if (h) db.config.gestorPinHash = h; }, "acesso do gestor atualizado", "Acesso do gestor salvo."); },
+  async "salvar-config"() { const modo = $("input[name=modo]:checked").value; const c = { modo, owner: val("c-owner"), repo: val("c-repo"), branch: val("c-branch") || "main", path: val("c-path") || "data/db.json", token: val("c-token") }; if (modo === "github" && (!c.owner || !c.repo || !c.token)) return toast("Preencha usuário, repositório e token.", true); Store.salvarCfg(c); toast("Configuração salva. Reconectando…"); setTimeout(() => location.reload(), 600); },
   async "testar-config"() {
-    const c = { owner: val("c-owner"), repo: val("c-repo"), branch: val("c-branch") || "main", path: val("c-path") || "data/db.json", token: val("c-token") };
-    const out = $("#c-res"); out.innerHTML = `<div class="aviso info">Testando…</div>`;
-    try {
-      const r = await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}`, { headers: Store.hdr(c), cache: "no-store" });
-      if (!r.ok) throw new Error(r.status === 404 ? "Repositório não encontrado ou sem acesso com este token." : `GitHub respondeu ${r.status}.`);
-      const j = await r.json(); const { db } = await Store.ghGet(c);
-      out.innerHTML = `<div class="aviso ok">Conectado a <b>${esc(j.full_name)}</b> (${j.private ? "privado" : "público"}). ${db ? `Base encontrada com ${db.estagiarios?.length || 0} estagiário(s).` : "A base ainda não existe: ela será criada na primeira gravação."}${j.permissions && !j.permissions.push ? "<br><b>Atenção:</b> o token parece não ter permissão de escrita." : ""}</div>`;
-    } catch (e) { out.innerHTML = `<div class="aviso erro">${esc(e.message)}</div>`; }
+    const c = { owner: val("c-owner"), repo: val("c-repo"), branch: val("c-branch") || "main", path: val("c-path") || "data/db.json", token: val("c-token") }; const out = $("#c-res"); out.innerHTML = `<div class="aviso info">Testando…</div>`;
+    try { const r = await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}`, { headers: Store.hdr(c), cache: "no-store" }); if (!r.ok) throw new Error(r.status === 404 ? "Repositório não encontrado ou sem acesso com este token." : `GitHub respondeu ${r.status}.`);
+      const j = await r.json(); const rb = await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/branches/${encodeURIComponent(c.branch)}`, { headers: Store.hdr(c), cache: "no-store" }); if (rb.status === 404) throw new Error(`A branch "${c.branch}" não existe. Crie-a no GitHub ou corrija o nome.`);
+      const { db } = await Store.ghGet(c); out.innerHTML = `<div class="aviso ok">Conectado a <b>${esc(j.full_name)}</b> (${j.private ? "privado" : "público"}), branch <b>${esc(c.branch)}</b>. ${db ? `Base encontrada com ${db.estagiarios?.length || 0} estagiário(s).` : "A base será criada na primeira gravação."}</div>`; }
+    catch (e) { out.innerHTML = `<div class="aviso erro">${esc(e.message)}</div>`; }
   },
-  exportar() {
-    const blob = new Blob([JSON.stringify(S.db, null, 1)], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `trilha-gfc-base-${hoje()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  },
-  importar(el) {
-    const f = el.files?.[0]; if (!f) return;
-    const rd = new FileReader();
-    rd.onload = () => { let novo; try { novo = migrar(JSON.parse(rd.result)); if (!Array.isArray(novo.estagiarios)) throw 0; } catch { return toast("Arquivo inválido: não parece uma base da Trilha GFC.", true); }
-      if (!confirm("Substituir a base atual por este arquivo?")) return;
-      salvar(db => { Object.keys(db).forEach(k => delete db[k]); Object.assign(db, novo); }, "base importada de arquivo", "Base importada."); };
-    rd.readAsText(f);
-  },
-  async "salvar-perfil"() {
-    const nome = val("p-nome"), pin = val("p-pin");
-    if (pin && !/^\d{4,8}$/.test(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true);
-    const h = pin ? await hashPin("instrutor", pin) : null;
-    salvar(db => { if (nome) db.instrutor.nome = nome; if (h) db.instrutor.pinHash = h; }, "perfil da instrutora atualizado", "Perfil salvo.");
-  }
+  exportar() { const blob = new Blob([JSON.stringify(S.db, null, 1)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `trilha-gfc-base-${hoje()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); },
+  importar(el) { const f = el.files?.[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { let n; try { n = migrar(JSON.parse(rd.result)); if (!Array.isArray(n.estagiarios)) throw 0; } catch { return toast("Arquivo inválido.", true); } if (!confirm("Substituir a base atual?")) return; salvar(db => { Object.keys(db).forEach(k => delete db[k]); Object.assign(db, n); }, "base importada", "Base importada."); }; rd.readAsText(f); },
+  async "salvar-perfil"() { const nome = val("p-nome"), pin = val("p-pin"); if (pin && !pinOk(pin)) return toast("O PIN precisa ter de 4 a 8 dígitos.", true); const h = pin ? await hashPin("instrutor", pin) : null; salvar(db => { if (nome) db.instrutor.nome = nome; if (h) db.instrutor.pinHash = h; }, "perfil atualizado", "Perfil salvo."); }
 };
 
-/* ------------------------------ início ------------------------------ */
 window.addEventListener("hashchange", render);
 window.addEventListener("beforeunload", e => { if (fila.length) { e.preventDefault(); e.returnValue = ""; } });
 (async function iniciar() {
   try { S.user = JSON.parse(sessionStorage.getItem(K_SES) || "null"); } catch { S.user = null; }
-  try { await Store.carregar(); }
-  catch (e) { console.error(e); S.erroCarga = e.message || String(e); }
-  if (S.user && S.user.tipo === "estagiario" && !est(S.user.id)) S.user = null;
+  try { await Store.carregar(); } catch (e) { console.error(e); S.erroCarga = e.message || String(e); }
+  if (S.user?.tipo === "estagiario" && !est(S.user.id)) S.user = null;
   render();
 })();
+
 </script>
 </body>
 </html>
