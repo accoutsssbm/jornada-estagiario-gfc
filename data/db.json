@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T15:47:09.292Z",
+ "atualizadoEm": "2026-10-01T15:49:11.532Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -72,6 +72,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-01T15:49:11.532Z",
+   "quem": "Julia Evelyn",
+   "acao": "nova dúvida em M01"
+  },
   {
    "em": "2026-10-01T15:47:09.292Z",
    "quem": "Julia Evelyn",
@@ -173,7 +178,16 @@
    "acao": "perfil de instrutora criado"
   }
  ],
- "duvidas": [],
+ "duvidas": [
+  {
+   "id": "dmuppm0303gooj",
+   "estId": "emupk7xojynsqh",
+   "modId": "M01",
+   "texto": "Sei que la namnam",
+   "em": "2026-10-01T15:49:11.532Z",
+   "resposta": null
+  }
+ ],
  "config": {
   "capacidade": {
    "1": 1,
