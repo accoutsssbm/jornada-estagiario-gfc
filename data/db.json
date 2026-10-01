@@ -1,7 +1,7 @@
 {
  "versao": 1,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-09-30T23:47:12.510Z",
+ "atualizadoEm": "2026-10-01T11:42:05.095Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -25,9 +25,11 @@
     "prazo": "2026-10-05",
     "prazoOriginal": "2026-10-05",
     "liberado": false,
-    "checklist": {},
+    "checklist": {
+     "4": true
+    },
     "dominio": "Observou",
-    "anotacoes": "",
+    "anotacoes": "Estou com duvidas\n",
     "tentativas": []
    }
   }
@@ -37,6 +39,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-01T11:42:05.095Z",
+   "quem": "Julia Evelyn",
+   "acao": "checklist M01"
+  },
   {
    "em": "2026-09-30T23:47:12.510Z",
    "quem": "Julia Evelyn",
