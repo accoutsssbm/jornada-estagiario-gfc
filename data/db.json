@@ -283,6 +283,7 @@
    "resposta": "Quando informamos um forecast de reforma, a Central Planning faz o planejamento de peças para aquele componente. Se dentro de um período de 3 meses após ou antes da data informada essa reforma acontecer, o indicador é alcançado. Ou seja, o critério é a reforma efetivamente acontecer no período planejado",
    "respondidoEm": "2026-10-02T14:55:38.807Z",
    "lidaEst": false
+  }
  ],
  "config": {
   "capacidade": {
