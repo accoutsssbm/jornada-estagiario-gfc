@@ -500,22 +500,21 @@ function planejamento(eid) {
   }
   return out;
 }
+function horasEntre(a, b) { const c = cap(); let h = 0; const d = new Date(a + "T12:00:00"); let g = 0; while (iso(d) < b && g < 2000) { d.setDate(d.getDate() + 1); if (util(d)) h += Number(c[d.getDay()] || 0); g++; } return h; }
 function previsao(eid) {
-  let cur = hoje(); let pend = false;
+  // Mesma regra do planejamento: tudo em horas acumuladas a partir de hoje, convertidas em data uma única vez.
+  // Um prazo já marcado (teste ou apresentação) termina no próprio dia do prazo e empurra o que vem depois.
+  const hj = hoje(); let T = 0, pend = false;
+  const ate = (prazo, h) => { if (!prazo || prazo <= hj) return; /* estudo já cumprido: falta só o envio do teste */ const ant = new Date(prazo + "T12:00:00"); ant.setDate(ant.getDate() - 1); T = Math.max(T + Math.min(h, horasEntre(hj, prazo)), horasEntre(hj, iso(ant)) + 0.01); };
   for (const f of C.fases) {
     const fs = faseSit(eid, f.n); if (fs.st === "concluida") continue; pend = true;
     for (const m of escopoFase(eid, f.n)) {
-      const s = situacao(eid, m.id); const p = s.p;
-      if (s.st === "aprovado") continue;
-      if (["estudo", "reciclagem", "teste"].includes(s.st)) { cur = maxData(cur, p.prazo); cur = addUteis(cur, 1); }
-      else if (s.st === "avaliacao") cur = addUteis(cur, 1);
-      else cur = addHoras(cur, s.aj.horasEstudo);
+      const s = situacao(eid, m.id); if (s.st === "aprovado" || s.st === "avaliacao") continue;
+      if (["estudo", "reciclagem", "teste"].includes(s.st)) ate(s.p.prazo, s.aj.horasEstudo); else T += s.aj.horasEstudo;
     }
-    if (fs.st === "entrega" || fs.st === "ajuste") { cur = maxData(cur, fs.f?.prazoEntrega || cur); cur = addUteis(cur, 1); }
-    else if (fs.st === "apresentacao") cur = addUteis(cur, 1);
-    else cur = addHoras(cur, f.horasApresentacao);
+    if (fs.st === "entrega" || fs.st === "ajuste") ate(fs.f?.prazoEntrega, f.horasApresentacao); else if (fs.st !== "apresentacao") T += f.horasApresentacao;
   }
-  return pend ? cur : null;
+  return pend ? (T > 0 ? addHoras(hj, T) : hj) : null;
 }
 function indicadores(eid) {
   const esc0 = escopoDe(eid); let aprov = 0, pendT = 0, reprov = 0, plan = 0, real = 0; const n1 = [], nf = [], gat = [];
