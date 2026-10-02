@@ -1,7 +1,7 @@
 {
- "versao": 1,
+ "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-01T16:55:13.382Z",
+ "atualizadoEm": "2026-10-02T12:55:47.050Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -27,51 +27,19 @@
   }
  ],
  "progresso": {
-  "emuoqtvavv1onl": {
-   "M01": {
-    "status": "estudo",
-    "inicio": "2026-09-30",
-    "prazo": "2026-10-05",
-    "prazoOriginal": "2026-10-05",
-    "liberado": false,
-    "checklist": {
-     "0": true,
-     "1": true,
-     "2": true,
-     "3": true,
-     "4": true
-    },
-    "dominio": "Executou com apoio",
-    "anotacoes": "Estou com duvidas\n",
-    "tentativas": []
-   }
-  },
-  "emupk7xojynsqh": {
-   "M01": {
-    "status": "estudo",
-    "inicio": "2026-10-01",
-    "prazo": "2026-10-06",
-    "prazoOriginal": "2026-10-06",
-    "liberado": false,
-    "checklist": {
-     "0": true,
-     "1": true,
-     "2": true,
-     "3": true,
-     "4": true
-    },
-    "dominio": "Executou com apoio",
-    "anotacoes": "A lucidez quanto ás atividades que abrange cada contrato atendidos pelo GFC.",
-    "tentativas": [],
-    "entregas": []
-   }
-  }
+  "emuoqtvavv1onl": {},
+  "emupk7xojynsqh": {}
  },
  "ajustes": {},
  "questoesExtras": {},
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-02T12:55:47.050Z",
+   "quem": "Vitória Karoline",
+   "acao": "progresso zerado (reestruturação v4)"
+  },
   {
    "em": "2026-10-01T16:55:13.382Z",
    "quem": "Julia Evelyn",
@@ -296,14 +264,22 @@
  "config": {
   "capacidade": {
    "1": 1,
-   "2": 2.5,
-   "3": 2.5,
-   "4": 2.5,
+   "2": 3,
+   "3": 3,
+   "4": 3,
    "5": 1
   },
+  "feriados": [
+   "2026-10-12",
+   "2026-11-02",
+   "2026-11-20",
+   "2026-12-25",
+   "2027-01-01"
+  ],
   "pesoTeste": 0.6,
   "notaMinIT": 7,
   "gestorPinHash": "d8c0f94ba8c6d238dbba594d91753c688399daaecf1003e1512dc03291834ad7",
   "gestorNome": "Elienai Silva"
- }
+ },
+ "fases": {}
 }
