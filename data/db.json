@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-02T12:57:08.351Z",
+ "atualizadoEm": "2026-10-02T12:58:41.332Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -20,7 +20,7 @@
    "id": "emupk7xojynsqh",
    "nome": "Julia Evelyn",
    "email": "",
-   "inicio": "2026-10-01",
+   "inicio": "2026-10-02",
    "pinHash": "1876077a3bee4b591fba48afc02e71dcd45eaad3fc37026e6935118167b2bf34",
    "ativo": true,
    "criadoEm": "2026-10-01T13:18:17.589Z"
@@ -47,6 +47,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-02T12:58:41.332Z",
+   "quem": "Vitória Karoline",
+   "acao": "cadastro atualizado: Julia Evelyn"
+  },
   {
    "em": "2026-10-02T12:57:08.351Z",
    "quem": "Julia Evelyn",
