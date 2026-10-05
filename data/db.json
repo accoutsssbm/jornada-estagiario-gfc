@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-02T14:55:38.807Z",
+ "atualizadoEm": "2026-10-05T13:51:05.813Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -47,6 +47,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-05T13:51:05.813Z",
+   "quem": "Julia Evelyn",
+   "acao": "leu respostas das dúvidas"
+  },
   {
    "em": "2026-10-02T14:55:38.807Z",
    "quem": "Vitória Karoline",
@@ -282,7 +287,7 @@
    "em": "2026-10-01T16:55:13.382Z",
    "resposta": "Quando informamos um forecast de reforma, a Central Planning faz o planejamento de peças para aquele componente. Se dentro de um período de 3 meses após ou antes da data informada essa reforma acontecer, o indicador é alcançado. Ou seja, o critério é a reforma efetivamente acontecer no período planejado",
    "respondidoEm": "2026-10-02T14:55:38.807Z",
-   "lidaEst": false
+   "lidaEst": true
   }
  ],
  "config": {
