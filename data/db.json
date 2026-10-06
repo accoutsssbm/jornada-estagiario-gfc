@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-06T17:52:19.477Z",
+ "atualizadoEm": "2026-10-06T17:52:22.712Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -319,6 +319,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-06T17:52:22.712Z",
+   "quem": "Julia Evelyn",
+   "acao": "enviou o teste de M01"
+  },
   {
    "em": "2026-10-06T17:52:19.477Z",
    "quem": "Julia Evelyn",
