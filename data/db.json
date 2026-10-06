@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-05T14:31:15.158Z",
+ "atualizadoEm": "2026-10-06T17:52:19.477Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -30,7 +30,7 @@
   "emuoqtvavv1onl": {},
   "emupk7xojynsqh": {
    "M01": {
-    "status": "estudo",
+    "status": "avaliacao",
     "inicio": "2026-10-02",
     "prazo": "2026-10-06",
     "prazoOriginal": "2026-10-06",
@@ -44,7 +44,273 @@
     },
     "dominio": "Executou com apoio",
     "anotacoes": "Os tipos de contratos disponibilizado para os clientes.",
-    "tentativas": []
+    "tentativas": [
+     {
+      "id": "tmuwz7ld27z7lx",
+      "n": 1,
+      "enviadoEm": "2026-10-06T17:52:19.477Z",
+      "questoes": [
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Qual destes conjuntos NÃO faz parte do Grupo 1 (trem de força) monitorado pelo GFC?",
+        "opcoes": [
+         "Conversor de torque",
+         "Diferencial",
+         "Bomba hidráulica de implementos",
+         "Comandos finais"
+        ],
+        "correta": 2,
+        "explicacao": "Grupo 1 = motor diesel, transmissão, conversor de torque, diferencial e comandos finais.",
+        "id": "M01q1",
+        "b": 4,
+        "e": "C"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Um contrato em que a Sotreq executa toda a manutenção da frota, mas os indicadores de disponibilidade e MTBF ficam sob gestão do cliente, é da modalidade:",
+        "opcoes": [
+         "Full Service",
+         "MARC",
+         "Rentável",
+         "Locação com operador"
+        ],
+        "correta": 0,
+        "explicacao": "Full Service: controle total das manutenções, sem garantia contratual de performance.",
+        "id": "M01q2",
+        "b": 3,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Na modalidade Rentável, a Sotreq é responsável por:",
+        "opcoes": [
+         "Executar a manutenção e garantir a disponibilidade",
+         "Executar a manutenção, sem garantia de performance",
+         "Gerir apenas o estoque de componentes",
+         "Fornecer apenas a mão de obra especializada"
+        ],
+        "correta": 3,
+        "explicacao": "No Rentável, o cliente faz a gestão da manutenção e dos resultados; a Sotreq entra com a mão de obra.",
+        "id": "M01q3",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Segundo a Estratégia de Atuação, em qual situação a acurácia do monitoramento de vida útil é MAIS crítica?",
+        "opcoes": [
+         "Em contratos Rentável, porque o cliente decide sozinho",
+         "Em contratos MARC, porque a Sotreq responde pela manutenção e pelo resultado operacional",
+         "Em sites com frota pequena",
+         "Em frotas recém-entregues, na 1ª vida"
+        ],
+        "correta": 1,
+        "explicacao": "Quanto maior a responsabilidade contratual da Sotreq, mais crítico o monitoramento.",
+        "id": "M01q4",
+        "b": 1,
+        "e": "C"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "A definição de quais ativos o GFC monitora nasce:",
+        "opcoes": [
+         "Do pedido de cada cliente no início do contrato",
+         "Da estratégia da Caterpillar para o ciclo de vida dos produtos, com múltiplas vidas e reformas programadas",
+         "Da escolha do CSP de cada site",
+         "Do valor de compra de cada equipamento"
+        ],
+        "correta": 1,
+        "explicacao": "A CAT projeta os equipamentos para múltiplas vidas; a Sotreq desdobra essa diretriz como dealer.",
+        "id": "M01q5",
+        "b": 1,
+        "e": "C"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Áreas como Performance, Desenvolvimento e Projetos dependem de os equipamentos estarem inseridos no GFC para criar seus próprios controles. Isso está ligado a qual pilar do GFC?",
+        "opcoes": [
+         "Gestão de Relacionamento Comercial",
+         "Indicadores de Conformidade",
+         "Planejamento de Reformas e Suprimentos",
+         "Rastreabilidade de Equipamentos e Componentes"
+        ],
+        "correta": 3,
+        "explicacao": "A rastreabilidade mantém a base que registra onde cada componente está e por quais reformas passou.",
+        "id": "M01q6",
+        "b": 1,
+        "e": "C"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "O pilar Planejamento de Reformas e Suprimentos (Forecast Comercial) alimenta diretamente:",
+        "opcoes": [
+         "O Planejamento Central e as previsões de fábrica da Caterpillar, além de apontar o estoque mínimo de parque reserva",
+         "Apenas o RMC do site",
+         "O cálculo do ROM de cada equipamento",
+         "A nota de Estado e Horímetro"
+        ],
+        "correta": 0,
+        "explicacao": "O forecast antecipa a demanda de reforma pela janela de 180 dias.",
+        "id": "M01q7",
+        "b": 1,
+        "e": "C"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Pelo pilar de Monitoramento das Condições Atuais das Frotas, as distorções entre o campo e o sistema devem ser tratadas:",
+        "opcoes": [
+         "Até o dia 15 do mês seguinte",
+         "No fechamento trimestral",
+         "Dentro do mês de competência",
+         "Quando o cliente solicitar"
+        ],
+        "correta": 2,
+        "explicacao": "Tudo precisa ser identificado e tratado dentro do mês de competência.",
+        "id": "M01q8",
+        "b": 1,
+        "e": "P"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Qual site da Regional Norte tem como única frota monitorada o modelo D11?",
+        "opcoes": [
+         "MRN",
+         "Tocantinzinho",
+         "Hydro Paragominas",
+         "Alcoa"
+        ],
+        "correta": 3,
+        "explicacao": "Alcoa: D11. MRN: D11 e 395. Tocantinzinho: 777 e 395. Paragominas: 777, D11, 990 e 395.",
+        "id": "M01q9",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Quais modelos o GFC monitora em Tocantinzinho (Brazauro)?",
+        "opcoes": [
+         "D11 e 395",
+         "777 e 395",
+         "797, 794 e D11",
+         "777, D11 e 990"
+        ],
+        "correta": 1,
+        "explicacao": "Tocantinzinho: frota de transporte e suporte, 777 e 395.",
+        "id": "M01q10",
+        "b": 1,
+        "e": "C"
+       },
+       {
+        "tipo": "aberta",
+        "peso": 3,
+        "enunciado": "Explique por que uma reforma planejada é melhor do que uma intervenção emergencial. Cite pelo menos três impactos concretos, para o cliente e para a Sotreq.",
+        "esperado": "Reforma emergencial custa substancialmente mais; parada não programada derruba disponibilidade e gera penalidade; falha catastrófica pode comprometer o casco e a próxima vida; a planejada permite parque reserva, programação do CRC e previsão de fábrica CAT.",
+        "id": "M01q11",
+        "b": 4,
+        "e": "C"
+       },
+       {
+        "tipo": "aberta",
+        "peso": 3,
+        "enunciado": "Quais são as três frentes de atuação do GFC e como uma alimenta a outra? Dê um exemplo prático de cada.",
+        "esperado": "Colaboração CSP × Engenharia; rotina de gestão dos indicadores; particularidades de cada site. Indicadores mostram onde agir, a colaboração decide a ação, as particularidades ajustam a forma de executar em cada contrato.",
+        "id": "M01q12",
+        "b": 4,
+        "e": "C"
+       }
+      ],
+      "respostas": {
+       "M01q1": 2,
+       "M01q2": 0,
+       "M01q3": 3,
+       "M01q4": 1,
+       "M01q5": 1,
+       "M01q6": 3,
+       "M01q7": 0,
+       "M01q8": 2,
+       "M01q9": 3,
+       "M01q10": 1,
+       "M01q11": {
+        "texto": "A manutenção planejada garante custos acordados com o cliente e cumpre com as exigências de disponibilidade física de seus ativos, sem falar da otimização de tempo durante a manutenção. Por outro lado, se tratando de uma intervenção emergencial, elas acarretam em desequilibro do estoque de componentes, inviabiliza a otimização de custos operacionais por parte do cliente e impacta nos indicadores da Sotreq. ",
+        "link": ""
+       },
+       "M01q12": {
+        "texto": "As três frentes são: Colaboração CSP e Engenharia, rotina de gestão dos indicadores e particularidades de cada site. A decisão de reforme nasce da interação entre o CSP e a Engenharia, o primeiro sendo a ponte do cliente com a contratada, a exemplo desta interação, temos o retorno de relatórios mensais com o estado de cada equipamento e seus horímetros. O histórico de horímetros presente no GFC indicam quando seus componentes devem ser trocados. O acompanhamento pelo GFC altera de acordo com o site e sua particularidade, Carajás sendo o cliente em que os ativos são acompanhados rigorosamente pela Sotreq. ",
+        "link": ""
+       }
+      },
+      "notas": {
+       "M01q1": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q2": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q3": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q4": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q5": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q6": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q7": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q8": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q9": {
+        "nota": 1,
+        "auto": true
+       },
+       "M01q10": {
+        "nota": 1,
+        "auto": true
+       }
+      },
+      "relatorio": {
+       "processo": "Este início do material proporcionou uma visão ampla das vertentes presentes no GFC, além do seu impacto e importância na rotina da Engenharia. Foi possível entender a importância do GFC até mesmo para outros setores da Engenharia e como o gerenciamento dessas informações inclusas nele garantem o bom andamento das operações em campo.",
+       "dificuldades": "Compreender os diferentes termos utilizados na Engenharia e associar as ferramentas presentes no material na prática da rotina.",
+       "superacao": "Foi importante reler o material algumas vezes e buscar enxergá-lo no processo prático.",
+       "horas": 6,
+       "confianca": 4,
+       "r1i": [
+        6,
+        0
+       ],
+       "r1": [
+        "TE",
+        "AT"
+       ],
+       "r2i": 2,
+       "r2": "TE"
+      },
+      "status": "pendente"
+     }
+    ]
    }
   }
  },
@@ -53,6 +319,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-06T17:52:19.477Z",
+   "quem": "Julia Evelyn",
+   "acao": "enviou o teste de M01"
+  },
   {
    "em": "2026-10-05T14:31:15.158Z",
    "quem": "Julia Evelyn",
