@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-07T17:37:05.141Z",
+ "atualizadoEm": "2026-10-07T17:46:37.414Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -363,6 +363,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-07T17:46:37.414Z",
+   "quem": "Julia Evelyn",
+   "acao": "nova dúvida em M02"
+  },
   {
    "em": "2026-10-07T17:37:05.141Z",
    "quem": "Julia Evelyn",
@@ -930,6 +935,14 @@
   }
  ],
  "duvidas": [
+  {
+   "id": "dmuyeg4pyh13jb",
+   "estId": "emupk7xojynsqh",
+   "modId": "M02",
+   "texto": "Qual a consequência de maior severidade referente a sobrevida de 135% dos ativos?",
+   "em": "2026-10-07T17:46:37.414Z",
+   "resposta": null
+  },
   {
    "id": "dmupryx2e6tzgy",
    "estId": "emupk7xojynsqh",
