@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-06T19:51:25.537Z",
+ "atualizadoEm": "2026-10-07T14:38:29.414Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -338,6 +338,17 @@
     "dominioValidado": "Executou com apoio",
     "notaTeste": 9.375,
     "aprovadoEm": "2026-10-06"
+   },
+   "M02": {
+    "status": "estudo",
+    "inicio": "2026-10-07",
+    "prazo": "2026-10-08",
+    "prazoOriginal": "2026-10-08",
+    "liberado": false,
+    "checklist": {},
+    "dominio": "Observou",
+    "anotacoes": "",
+    "tentativas": []
    }
   }
  },
@@ -346,6 +357,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-07T14:38:29.414Z",
+   "quem": "Julia Evelyn",
+   "acao": "iniciou M02"
+  },
   {
    "em": "2026-10-06T19:51:25.537Z",
    "quem": "Vitória Karoline",
