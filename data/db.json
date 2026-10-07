@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-07T17:27:03.909Z",
+ "atualizadoEm": "2026-10-07T17:27:11.272Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -353,7 +353,7 @@
      "4": true
     },
     "dominio": "Observou",
-    "anotacoes": "Neste módulo, ficou claro a descrição das atividades e o papel de cada responsável pela sua alçada, abordando os profissionais e suas funções dentro das particularidades de cada site. Foi possível enxergar o fluxo interno e periódico dentro do GFC",
+    "anotacoes": "Neste módulo, ficou claro a descrição das atividades e o papel de cada responsável pela sua alçada, abordando os profissionais e suas funções dentro das particularidades de cada site. Foi possível enxergar o fluxo interno e periódico dentro do GFC, ",
     "tentativas": []
    }
   }
@@ -363,6 +363,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-07T17:27:11.272Z",
+   "quem": "Julia Evelyn",
+   "acao": "anotações M02"
+  },
   {
    "em": "2026-10-07T17:27:03.908Z",
    "quem": "Julia Evelyn",
