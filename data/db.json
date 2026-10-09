@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-09T16:55:27.057Z",
+ "atualizadoEm": "2026-10-09T18:41:42.975Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -340,7 +340,7 @@
     "aprovadoEm": "2026-10-06"
    },
    "M02": {
-    "status": "avaliacao",
+    "status": "aprovado",
     "inicio": "2026-10-07",
     "prazo": "2026-10-08",
     "prazoOriginal": "2026-10-08",
@@ -566,47 +566,62 @@
       "notas": {
        "M02q1": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q2": {
         "nota": 0,
-        "auto": true
+        "auto": true,
+        "coment": "Nesse caso especifico, quando vamos informar ao CSP o que tem q ser informado, fazemos isso via TEAMS."
        },
        "M02q3": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q4": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q5": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q6": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q7": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q8": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q9": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q10": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M02q11": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
+       },
+       "M02q12": {
+        "nota": 2,
+        "coment": "Em Carajás são três CPs, um por tipo de frota (elétricos, mecânicos e infraestrutura). A divisão caminhões/infraestrutura vale só para os CSPs. Faltou explicar que a cobrança é segmentada por frota e citar os nomes da tabela da Estratégia. A parte de Sossego e Onça Puma está correta."
        }
       },
       "relatorio": {
@@ -626,9 +641,18 @@
        "r2i": 2,
        "r2": "TE"
       },
-      "status": "pendente"
+      "status": "avaliada",
+      "nota": 8.571428571428571,
+      "aprovado": true,
+      "notaMin": 7,
+      "feedback": "Bom resultado no módulo: 8,6, com 10 das 11 objetivas corretas. Você mostrou domínio da divisão de papéis entre Consultor de Performance, CSP, Analista de GFC e Planejamento Central, e acertou as particularidades de cada site, inclusive os casos menos óbvios, como os D11 Fusion na modalidade Rentável em S11D e a divisão dos CSPs em Salobo.\n\nOs dois pontos que perderam nota estão ligados à dificuldade que você mesma apontou no relatório, a divisão de responsabilidades. Na questão 2, o acionamento dos CSPs para movimentação de estoque é feito pelo Teams, não por e-mail. O e-mail aparece em outras etapas do fluxo, como o histórico de RMC, e vale separar bem qual canal é usado em cada momento. Na questão 12, você aplicou aos Consultores de Performance de Carajás a mesma divisão dos CSPs. São três CPs (elétricos, mecânicos e infraestrutura) e dois CSPs (caminhões e infraestrutura). Essa diferença importa no fechamento, porque define a quem cobrar cada informação.\n\nAntes de seguir, revise a tabela da Estratégia com foco em Carajás e associe os nomes a cada frota. Isso também cobre o que faltou na dissertativa. Sua autoavaliação de segurança (4 de 5) está coerente com o desempenho. O próximo módulo está liberado.",
+      "dominio": "Observou",
+      "avaliadoEm": "2026-10-09T18:41:42.975Z"
      }
-    ]
+    ],
+    "dominioValidado": "Observou",
+    "notaTeste": 8.571428571428571,
+    "aprovadoEm": "2026-10-09"
    }
   }
  },
@@ -637,6 +661,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-09T18:41:42.975Z",
+   "quem": "Vitória Karoline",
+   "acao": "corrigiu teste M02: 8,6"
+  },
   {
    "em": "2026-10-09T16:55:27.057Z",
    "quem": "Julia Evelyn",
