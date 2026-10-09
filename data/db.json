@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-09T12:54:06.005Z",
+ "atualizadoEm": "2026-10-09T13:27:09.457Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -363,6 +363,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-09T13:27:09.457Z",
+   "quem": "Vitória Karoline",
+   "acao": "respondeu dúvida"
+  },
   {
    "em": "2026-10-09T12:54:06.005Z",
    "quem": "Vitória Karoline",
@@ -961,7 +966,9 @@
    "modId": "M02",
    "texto": "Qual a consequência de maior severidade referente a sobrevida de 135% dos ativos?",
    "em": "2026-10-07T17:46:37.414Z",
-   "resposta": null
+   "resposta": "Existem dois aspectos que podemos analisar nesse caso. O primeiro está relacionado ao resultado do nosso indicador. Quando mantemos no sistema um componente com percentual de vida útil consumida igual ou superior a 135%, há uma penalização que reduz a nota do resultado geral. A metodologia utilizada para calcular essa penalização ainda não está clara para nós. No entanto, considerando a realidade dos nossos sites, conseguimos atualizar as estimativas de forma estratégica, alinhando os registros à previsão de troca dos componentes.\n\nEsse processo funciona da seguinte forma: solicitamos aos consultores de performance que analisem a situação e verifiquem, junto ao cliente, o motivo pelo qual o componente ainda não foi substituído. Após esse retorno, o próprio consultor atualiza a vida útil estimada no sistema, com base na previsão de troca informada pelo cliente.\n\nPor exemplo, um componente com vida útil estimada em 20.000 horas atinge 135% dessa estimativa ao acumular 27.000 horas de operação. Nesse caso, o ajuste deve considerar a previsão de troca, para que o valor registrado reflita o planejamento e reduza a necessidade de novas alterações. Entretanto, em algumas situações, precisamos revisar a estimativa novamente, pois o cliente não realiza a substituição no prazo previsto.\n\nO segundo aspecto está relacionado ao custo de reforma do componente. Quando o cliente prolonga sua utilização até esse ponto, o desgaste pode elevar o custo da reforma e torná-la economicamente inviável, levando à necessidade de optar por um componente REMAN ou novo, com impacto no orçamento da empresa.\n\nAlém disso, em alguns casos, podem ocorrer paradas não programadas, nas quais, além da possível perda do componente, há redução da disponibilidade do equipamento e prejuízos à produtividade.",
+   "respondidoEm": "2026-10-09T13:27:09.457Z",
+   "lidaEst": false
   },
   {
    "id": "dmupryx2e6tzgy",
