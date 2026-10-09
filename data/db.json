@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-09T16:50:54.468Z",
+ "atualizadoEm": "2026-10-09T16:55:27.057Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -340,7 +340,7 @@
     "aprovadoEm": "2026-10-06"
    },
    "M02": {
-    "status": "estudo",
+    "status": "avaliacao",
     "inicio": "2026-10-07",
     "prazo": "2026-10-08",
     "prazoOriginal": "2026-10-08",
@@ -354,7 +354,281 @@
     },
     "dominio": "Observou",
     "anotacoes": "Neste módulo, ficou claro a descrição das atividades e o papel de cada responsável pela sua alçada, abordando os profissionais e suas funções dentro das particularidades de cada site. Foi possível enxergar o fluxo interno e periódico dentro do GFC, e como a aderência desses dados dependem do cumprimento do fluxo de maneira constante. Além disso, o módulo elucidou e detalhou o processo de  Forcast Comercial na prática, e seu impacto caso o prazo de intervenção não seja cumprido.",
-    "tentativas": []
+    "tentativas": [
+     {
+      "id": "tmv17hzoj6io6k",
+      "n": 1,
+      "enviadoEm": "2026-10-09T16:55:27.057Z",
+      "questoes": [
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Quem fornece à Engenharia o histórico consolidado das substituições físicas executadas em campo?",
+        "opcoes": [
+         "Consultor de Performance",
+         "CSP",
+         "Planejamento Central",
+         "O próprio cliente, direto na plataforma"
+        ],
+        "correta": 0,
+        "explicacao": "O Consultor de Performance fornece o histórico e valida os relatórios operacionais.",
+        "id": "M02q1",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Depois de auditar o histórico de trocas, a Engenharia aciona os CSPs para as movimentações de estoque. Qual canal se usa nesse acionamento?",
+        "opcoes": [
+         "E-mail formal",
+         "Comentário no GFC",
+         "Microsoft Teams",
+         "Ligação telefônica"
+        ],
+        "correta": 2,
+        "explicacao": "Solicitação formal do histórico = e-mail. Acionamento ágil do CSP para saldos e movimentações = Teams.",
+        "id": "M02q2",
+        "b": 3,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Quem tem a responsabilidade de garantir a inserção e atualização dos horímetros até cinco dias antes do fechamento do mês?",
+        "opcoes": [
+         "Consultor de Performance",
+         "Analista de GFC",
+         "CSP",
+         "Planejamento Central"
+        ],
+        "correta": 2,
+        "explicacao": "A Engenharia extrai e solicita; o CSP garante a inserção.",
+        "id": "M02q3",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Quem justifica as sobrevidas de componentes que passam de 135%?",
+        "opcoes": [
+         "Consultor de Performance",
+         "CSP",
+         "Planejamento Central",
+         "Cliente"
+        ],
+        "correta": 0,
+        "explicacao": "O CP justifica as sobrevidas e faz o ajuste e a calibração no GFC quando alertado.",
+        "id": "M02q4",
+        "b": 3,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Qual destas atribuições NÃO é do Analista de GFC / Engenharia?",
+        "opcoes": [
+         "Auditar os dados de troca recebidos",
+         "Executar a auditoria e calibração do ROM",
+         "Apurar os indicadores de conformidade",
+         "Gerir o Forecast Comercial junto ao cliente"
+        ],
+        "correta": 3,
+        "explicacao": "Gerir o Forecast com o cliente é do CSP.",
+        "id": "M02q5",
+        "b": 4,
+        "e": "C"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Em S11D, parte dos tratores D11 Fusion da infraestrutura está enquadrada em qual modalidade?",
+        "opcoes": [
+         "MARC",
+         "Rentável",
+         "Full Service",
+         "Fora do escopo do GFC"
+        ],
+        "correta": 1,
+        "explicacao": "794AC no MARC; parte dos D11 Fusion no Rentável.",
+        "id": "M02q6",
+        "b": 3,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Em S11D, o CSP que atende os caminhões elétricos 794AC também atende:",
+        "opcoes": [
+         "Toda a frota de tratores",
+         "As carregadeiras de grande porte 994K",
+         "As escavadeiras 395",
+         "As motoniveladoras 24"
+        ],
+        "correta": 1,
+        "explicacao": "Um CSP atende 794AC + 994K; outro atende o restante da infraestrutura.",
+        "id": "M02q7",
+        "b": 3,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Quantos CSPs dividem a regularização de saldos em Carajás e como?",
+        "opcoes": [
+         "Um para todo o site",
+         "Três: elétricos, esteira e pneus",
+         "Um por tipo de equipamento, cinco no total",
+         "Dois: um para caminhões elétricos e mecânicos, outro para toda a infraestrutura"
+        ],
+        "correta": 3,
+        "explicacao": "Carajás: 2 CSPs. Salobo é que tem 3 (elétricos, infra de esteira, infra de pneus).",
+        "id": "M02q8",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Em Salobo, os CSPs são divididos em:",
+        "opcoes": [
+         "Caminhões elétricos, infraestrutura de esteira e infraestrutura de pneus",
+         "Caminhões elétricos e caminhões mecânicos",
+         "Um único CSP para todo o site",
+         "Caminhões e carregadeiras"
+        ],
+        "correta": 0,
+        "explicacao": "Salobo tem três frentes de CSP.",
+        "id": "M02q9",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Qual destes sites segue o modelo unificado (um Consultor de Performance e um CSP para tudo)?",
+        "opcoes": [
+         "Carajás",
+         "Salobo",
+         "Sossego",
+         "S11D"
+        ],
+        "correta": 2,
+        "explicacao": "Sossego, Onça Puma, Paragominas, MRN, Brazauro, Alcoa e Serra Leste são unificados.",
+        "id": "M02q10",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "mc",
+        "peso": 1,
+        "enunciado": "Qual o papel do Planejamento Central (Central Planning) no fluxo do GFC?",
+        "opcoes": [
+         "Validar o histórico de trocas",
+         "Inserir os horímetros",
+         "Calibrar o ROM dos equipamentos",
+         "Processar a demanda futura de reformas a partir do Forecast e emitir as previsões de fábrica à Caterpillar"
+        ],
+        "correta": 3,
+        "explicacao": "Central Planning transforma o forecast em demanda e previsão de fábrica.",
+        "id": "M02q11",
+        "b": 1,
+        "e": "R"
+       },
+       {
+        "tipo": "aberta",
+        "peso": 3,
+        "enunciado": "Descreva a estrutura de atendimento de Carajás e de dois sites unificados (ex.: Sossego e Onça Puma): quantos Consultores de Performance e CSPs, como se dividem e como isso muda a forma de você cobrar as informações no fechamento.",
+        "esperado": "Carajás: um CP por tipo de frota (elétricos, mecânicos, infraestrutura) e dois CSPs (caminhões elétricos+mecânicos / infraestrutura) — cobrança segmentada por frota e pessoa. Sossego e Onça Puma: um CP e um CSP — cobrança única, concentrada em uma pessoa. Nomes conforme a tabela da Estratégia.",
+        "id": "M02q12",
+        "b": 4,
+        "e": "C"
+       }
+      ],
+      "respostas": {
+       "M02q1": 0,
+       "M02q2": 0,
+       "M02q3": 2,
+       "M02q4": 0,
+       "M02q5": 3,
+       "M02q6": 1,
+       "M02q7": 1,
+       "M02q8": 3,
+       "M02q9": 0,
+       "M02q10": 2,
+       "M02q11": 3,
+       "M02q12": {
+        "texto": "É em Carajás que a estrutura se concentra com uma maior complexidade e volume de ativos em operação. A sua gestão garante dois Consultores de Performance, um para caminhões elétricos e caminhões mecânicos e outro para a frota de infraestrutura, e a responsabilidade pela ponte comercial sendo concentrada com dois CSPs, também um para caminhões e outro para infraestrutura. Dado o número de pessoas responsáveis, é importante cobrar as pessoas corretas para não atrasar o fechamento das informações periódicas. Já se tratando de sites com estrutura unificada, a exemplo de Sossego e Onça Puma, eles possuem somente um Consultor de Performance e um CSP responsável por toda a frota do site, por este motivo as cobranças são destinadas a uma única pessoa.",
+        "link": ""
+       }
+      },
+      "notas": {
+       "M02q1": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q2": {
+        "nota": 0,
+        "auto": true
+       },
+       "M02q3": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q4": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q5": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q6": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q7": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q8": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q9": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q10": {
+        "nota": 1,
+        "auto": true
+       },
+       "M02q11": {
+        "nota": 1,
+        "auto": true
+       }
+      },
+      "relatorio": {
+       "processo": "Os conhecimentos adquiridos neste módulo proporcionaram uma maior clareza quanto aos papéis desempenhados em suas respectivas funções, e particularidade de cada site e a distribuição das frotas. A forma do conteúdo entregue em formato de tabela facilitou o entendimento e associação dos itens.",
+       "dificuldades": "Entender a estrutura de divisão de responsabilidades para cada função.",
+       "superacao": "Recorrer a utilização de exemplos concretos. Ex.: Histórico de RMC por E-mail, informe de troca de componentes por outros canais.",
+       "horas": 3,
+       "confianca": 4,
+       "r1i": [
+        2,
+        6
+       ],
+       "r1": [
+        "RE",
+        "TE"
+       ],
+       "r2i": 2,
+       "r2": "TE"
+      },
+      "status": "pendente"
+     }
+    ]
    }
   }
  },
@@ -363,6 +637,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-09T16:55:27.057Z",
+   "quem": "Julia Evelyn",
+   "acao": "enviou o teste de M02"
+  },
   {
    "em": "2026-10-09T16:50:54.468Z",
    "quem": "Julia Evelyn",
