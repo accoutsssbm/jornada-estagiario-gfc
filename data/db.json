@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-13T14:36:51.934Z",
+ "atualizadoEm": "2026-10-13T14:37:16.174Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -661,8 +661,11 @@
     "prazoOriginal": "2026-10-15",
     "liberado": false,
     "checklist": {
-     "0": false,
-     "1": false
+     "0": true,
+     "1": true,
+     "2": true,
+     "3": true,
+     "4": true
     },
     "dominio": "Executou sozinha",
     "anotacoes": "A importância inegociável das ferramentas que se utilizam das horas de atuação dos equipamentos e componentes como base para as demais rotinas no GFC, sendo a linguagem de todas essas rotinas.",
@@ -675,6 +678,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-13T14:37:16.174Z",
+   "quem": "Julia Evelyn",
+   "acao": "checklist M03"
+  },
   {
    "em": "2026-10-13T14:36:51.934Z",
    "quem": "Julia Evelyn",
