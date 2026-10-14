@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-13T14:37:20.369Z",
+ "atualizadoEm": "2026-10-14T16:31:46.043Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -678,6 +678,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-14T16:31:46.043Z",
+   "quem": "Julia Evelyn",
+   "acao": "nova dúvida em M03"
+  },
   {
    "em": "2026-10-13T14:37:20.369Z",
    "quem": "Julia Evelyn",
@@ -1385,6 +1390,14 @@
   }
  ],
  "duvidas": [
+  {
+   "id": "dmv8buttn77wwq",
+   "estId": "emupk7xojynsqh",
+   "modId": "M03",
+   "texto": "Permaneceu a dúvida sobre o que seria a métrica TSI - Time Since Installed: horas trabalhadas no equipamento atual.",
+   "em": "2026-10-14T16:31:46.043Z",
+   "resposta": null
+  },
   {
    "id": "dmuyeg6a04suu9",
    "estId": "emupk7xojynsqh",
