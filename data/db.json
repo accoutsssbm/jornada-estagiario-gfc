@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-15T17:08:04.751Z",
+ "atualizadoEm": "2026-10-15T18:52:43.230Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -655,7 +655,7 @@
     "aprovadoEm": "2026-10-09"
    },
    "M03": {
-    "status": "avaliacao",
+    "status": "aprovado",
     "inicio": "2026-10-13",
     "prazo": "2026-10-15",
     "prazoOriginal": "2026-10-15",
@@ -881,47 +881,62 @@
       "notas": {
        "M03q1": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q2": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q3": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q4": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q5": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q6": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q7": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q8": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q9": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q10": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
        },
        "M03q11": {
         "nota": 1,
-        "auto": true
+        "auto": true,
+        "coment": ""
+       },
+       "M03q12": {
+        "nota": 3,
+        "coment": ""
        }
       },
       "relatorio": {
@@ -941,9 +956,18 @@
        "r2i": 2,
        "r2": "TE"
       },
-      "status": "pendente"
+      "status": "avaliada",
+      "nota": 10,
+      "aprovado": true,
+      "notaMin": 7,
+      "feedback": "Parabéns, concluiu esse módulo com êxito.",
+      "dominio": "Executou sozinha",
+      "avaliadoEm": "2026-10-15T18:52:43.229Z"
      }
-    ]
+    ],
+    "dominioValidado": "Executou sozinha",
+    "notaTeste": 10,
+    "aprovadoEm": "2026-10-15"
    }
   }
  },
@@ -952,6 +976,11 @@
  "questoesOff": {},
  "encontros": [],
  "log": [
+  {
+   "em": "2026-10-15T18:52:43.230Z",
+   "quem": "Vitória Karoline",
+   "acao": "corrigiu teste M03: 10,0"
+  },
   {
    "em": "2026-10-15T17:08:04.751Z",
    "quem": "Julia Evelyn",
@@ -1729,6 +1758,12 @@
   "gestorNome": "Elienai Silva"
  },
  "fases": {
-  "emupk7xojynsqh": {}
+  "emupk7xojynsqh": {
+   "1": {
+    "status": "entrega",
+    "prazoEntrega": "2026-10-19",
+    "entregas": []
+   }
+  }
  }
 }
