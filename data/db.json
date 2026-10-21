@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-15T18:52:43.230Z",
+ "atualizadoEm": "2026-10-21T20:10:41.364Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -977,6 +977,11 @@
  "encontros": [],
  "log": [
   {
+   "em": "2026-10-21T20:10:41.364Z",
+   "quem": "Vitória Karoline",
+   "acao": "respondeu dúvida"
+  },
+  {
    "em": "2026-10-15T18:52:43.230Z",
    "quem": "Vitória Karoline",
    "acao": "corrigiu teste M03: 10,0"
@@ -1704,7 +1709,9 @@
    "modId": "M03",
    "texto": "Permaneceu a dúvida sobre o que seria a métrica TSI - Time Since Installed: horas trabalhadas no equipamento atual.",
    "em": "2026-10-14T16:31:46.043Z",
-   "resposta": null
+   "resposta": "Não entendi sua duvida.",
+   "respondidoEm": "2026-10-21T20:10:41.364Z",
+   "lidaEst": false
   },
   {
    "id": "dmuyeg6a04suu9",
