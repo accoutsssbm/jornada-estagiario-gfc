@@ -1,7 +1,7 @@
 {
  "versao": 4,
  "criadoEm": "2026-09-30T23:31:12.107Z",
- "atualizadoEm": "2026-10-21T20:11:38.430Z",
+ "atualizadoEm": "2026-10-29T17:37:21.153Z",
  "instrutor": {
   "nome": "Vitória Karoline",
   "pinHash": "b7541586f1ce3c49b52146c51d4ed123b005f26080195b6f6b04f96a13ca3bb0"
@@ -977,6 +977,11 @@
  "encontros": [],
  "log": [
   {
+   "em": "2026-10-29T17:37:21.153Z",
+   "quem": "Julia Evelyn",
+   "acao": "entregou a apresentação da Fase 1"
+  },
+  {
    "em": "2026-10-21T20:11:38.430Z",
    "quem": "Julia Evelyn",
    "acao": "leu respostas das dúvidas"
@@ -1772,9 +1777,25 @@
  "fases": {
   "emupk7xojynsqh": {
    "1": {
-    "status": "entrega",
+    "status": "apresentacao",
     "prazoEntrega": "2026-10-19",
-    "entregas": []
+    "entregas": [
+     {
+      "id": "xmvttsxlreithk",
+      "n": 1,
+      "enviadoEm": "2026-10-29T17:37:21.153Z",
+      "arquivos": [
+       {
+        "nome": "Apresentacao_Fase1_GFC.pptx",
+        "path": "entregas/emupk7xojynsqh/F1/1793295437926-Apresentacao_Fase1_GFC.pptx",
+        "tamanho": 40550
+       }
+      ],
+      "link": "",
+      "obs": "Apresentação realizada em 29/10/2026 - Contextualização Trilha GFC",
+      "status": "pendente"
+     }
+    ]
    }
   }
  }
